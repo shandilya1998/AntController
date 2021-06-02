@@ -1,0 +1,58 @@
+/home/shandilya/.local/lib/python3.8/site-packages/torch/cuda/__init__.py:52: UserWarning: CUDA initialization: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx (Triggered internally at  /pytorch/c10/cuda/CUDAFunctions.cpp:100.)
+  return torch._C._cuda_getDeviceCount() > 0
+Creating window glfw
+Traceback (most recent call last):
+  File "ddpg.py", line 199, in <module>
+    env = stable_baselines3.common.env_util.make_vec_env(
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/env_util.py", line 102, in make_vec_env
+    return vec_env_cls([make_env(i + start_index) for i in range(n_envs)], **vec_env_kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 25, in __init__
+    self.envs = [fn() for fn in env_fns]
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 25, in <listcomp>
+    self.envs = [fn() for fn in env_fns]
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/env_util.py", line 77, in _init
+    env = gym.make(env_id, **env_kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 145, in make
+    return registry.make(id, **kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 90, in make
+    env = spec.make(**kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 60, in make
+    env = cls(**_kwargs)
+  File "/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.py", line 335, in __init__
+    super(AntEnvV3, self).__init__(path)
+  File "/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.py", line 83, in __init__
+    mujoco_env.MujocoEnv.__init__(self, path, 5)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/mujoco/mujoco_env.py", line 64, in __init__
+    observation, _reward, done, _info = self.step(action)
+  File "/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.py", line 405, in step
+    info['reward_height'] = np.exp(-np.sum(np.square(self.achieved_goal[4] - self.desired_goal[4]), -1))
+IndexError: index 4 is out of bounds for axis 0 with size 4
+/home/shandilya/.local/lib/python3.8/site-packages/torch/cuda/__init__.py:52: UserWarning: CUDA initialization: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx (Triggered internally at  /pytorch/c10/cuda/CUDAFunctions.cpp:100.)
+  return torch._C._cuda_getDeviceCount() > 0
+Creating window glfw
+Traceback (most recent call last):
+  File "ddpg.py", line 199, in <module>
+    env = stable_baselines3.common.env_util.make_vec_env(
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/env_util.py", line 102, in make_vec_env
+    return vec_env_cls([make_env(i + start_index) for i in range(n_envs)], **vec_env_kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 25, in __init__
+    self.envs = [fn() for fn in env_fns]
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 25, in <listcomp>
+    self.envs = [fn() for fn in env_fns]
+  File "/home/shandilya/.local/lib/python3.8/site-packages/stable_baselines3/common/env_util.py", line 77, in _init
+    env = gym.make(env_id, **env_kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 145, in make
+    return registry.make(id, **kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 90, in make
+    env = spec.make(**kwargs)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 60, in make
+    env = cls(**_kwargs)
+  File "/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.py", line 335, in __init__
+    super(AntEnvV3, self).__init__(path)
+  File "/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.py", line 83, in __init__
+    mujoco_env.MujocoEnv.__init__(self, path, 5)
+  File "/home/shandilya/.local/lib/python3.8/site-packages/gym/envs/mujoco/mujoco_env.py", line 64, in __init__
+    observation, _reward, done, _info = self.step(action)
+  File "/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.py", line 405, in step
+    info['reward_height'] = np.exp(-np.sum(np.square(self.achieved_goal[4] - self.desired_goal[4]), -1))
+IndexError: index 4 is out of bounds for axis 0 with size 4

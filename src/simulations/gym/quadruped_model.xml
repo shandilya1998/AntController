@@ -1,0 +1,96 @@
+<mujoco model="quadruped">
+    <compiler angle="radian" />
+    <size njmax="500" nconmax="100" />
+    <worldbody>
+        <body name="dummy" pos="0 0 0">
+            <inertial pos="0 0 0" mass="0" diaginertia="0 0 0" />
+            <body name="dummy_link" pos="0 0 0">
+                <inertial pos="0 0 0" mass="0.01" diaginertia="1e-05 1e-05 1e-05" />
+                <body name="base_link" pos="0 0 0.286">
+                    <inertial pos="0 0 0" mass="4.2592" diaginertia="0.0400746 0.0400746 0.0400746" />
+                    <geom size="0.1188 0.1188 0.0605" type="box" rgba="1 1 1 1" />
+                    <body name="imu_link" pos="0 0 0.0825">
+                        <inertial pos="0 0 0" mass="0.5324" diaginertia="0.000171788 0.000171788 0.000171788" />
+                        <geom size="0.022 0.022 0.022" type="box" rgba="1 1 1 1" />
+                    </body>
+                    <body name="front_right_leg3" pos="0.1188 0.1188 0" quat="0.92388 0 0 0.382683">
+                        <inertial pos="0 0 0" mass="1.0648" diaginertia="0.000193261 0.000193261 0.000193261" />
+                        <joint name="front_right_leg3_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-1.0472 1.0472" />
+                        <geom size="0.0165 0.0165 0.0572" type="box" rgba="1 1 1 1" />
+                        <body name="front_right_leg2" pos="0.0165 0.0165 0">
+                            <inertial pos="0 0 0" mass="0.5324" diaginertia="0.00216882 0.00216882 0.00216882" />
+                            <joint name="front_right_leg2_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                            <geom size="0.11 0.011 0.0275" pos="0.103366 0.011 0.0376222" quat="0.173648 0 0.984808 0" type="box" rgba="1 1 1 1" />
+                            <body name="front_right_leg1" pos="0.206732 0 0.0752444" quat="0.984808 0 -0.173648 0">
+                                <inertial pos="0 0 0" mass="8.5184" diaginertia="0.0588373 0.0588373 0.0588373" />
+                                <joint name="front_right_leg1_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                                <geom size="0.0165 0.0165 0.143" pos="0 -0.0165 -0.143" type="box" rgba="1 1 1 1" />
+                                <body name="front_right_leg_tip" pos="0 -0.0165 -0.297633">
+                                    <inertial pos="0 0 0" mass="0.21296" diaginertia="0.1 0.1 0.1" />
+                                    <geom size="0.0165" rgba="1 1 1 1" />
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                    <body name="front_left_leg3" pos="-0.1188 0.1188 0" quat="0.382683 0 0 0.92388">
+                        <inertial pos="0 0 0" mass="1.0648" diaginertia="0.000193261 0.000193261 0.000193261" />
+                        <joint name="front_left_leg3_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-1.0472 1.0472" />
+                        <geom size="0.0165 0.0165 0.0572" type="box" rgba="1 1 1 1" />
+                        <body name="front_left_leg2" pos="0.0165 -0.0165 0">
+                            <inertial pos="0 0 0" mass="0.5324" diaginertia="0.00216882 0.00216882 0.00216882" />
+                            <joint name="front_left_leg2_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                            <geom size="0.11 0.011 0.0275" pos="0.103366 -0.011 0.0376222" quat="0.173648 0 0.984808 0" type="box" rgba="1 1 1 1" />
+                            <body name="front_left_leg1" pos="0.206732 0 0.0752444" quat="0.984808 0 -0.173648 0">
+                                <inertial pos="0 0 0" mass="8.5184" diaginertia="0.0588373 0.0588373 0.0588373" />
+                                <joint name="front_left_leg1_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                                <geom size="0.0165 0.0165 0.143" pos="0 0.0165 -0.143" type="box" rgba="1 1 1 1" />
+                                <body name="front_left_leg_tip" pos="0 0.0165 -0.297633">
+                                    <inertial pos="0 0 0" mass="0.21296" diaginertia="0.1 0.1 0.1" />
+                                    <geom size="0.0165" rgba="1 1 1 1" />
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                    <body name="back_right_leg3" pos="0.1188 -0.1188 0" quat="0.92388 0 0 -0.382683">
+                        <inertial pos="0 0 0" mass="1.0648" diaginertia="0.000193261 0.000193261 0.000193261" />
+                        <joint name="back_right_leg3_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-1.0472 1.0472" />
+                        <geom size="0.0165 0.0165 0.0572" type="box" rgba="1 1 1 1" />
+                        <body name="back_right_leg2" pos="0.0165 0.0165 0">
+                            <inertial pos="0 0 0" mass="0.5324" diaginertia="0.00216882 0.00216882 0.00216882" />
+                            <joint name="back_right_leg2_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                            <geom size="0.11 0.011 0.0275" pos="0.103366 0.011 0.0376222" quat="0.173648 0 0.984808 0" type="box" rgba="1 1 1 1" />
+                            <body name="back_right_leg1" pos="0.206732 0 0.0752444" quat="0.984808 0 -0.173648 0">
+                                <inertial pos="0 0 0" mass="8.5184" diaginertia="0.0588373 0.0588373 0.0588373" />
+                                <joint name="back_right_leg1_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                                <geom size="0.0165 0.0165 0.143" pos="0 -0.0165 -0.143" type="box" rgba="1 1 1 1" />
+                                <body name="back_right_leg_tip" pos="0 -0.0165 -0.297633">
+                                    <inertial pos="0 0 0" mass="0.21296" diaginertia="0.1 0.1 0.1" />
+                                    <geom size="0.0165" rgba="1 1 1 1" />
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                    <body name="back_left_leg3" pos="-0.1188 -0.1188 0" quat="0.382683 0 0 -0.92388">
+                        <inertial pos="0 0 0" mass="1.0648" diaginertia="0.000193261 0.000193261 0.000193261" />
+                        <joint name="back_left_leg3_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-1.0472 1.0472" />
+                        <geom size="0.0165 0.0165 0.0572" type="box" rgba="1 1 1 1" />
+                        <body name="back_left_leg2" pos="0.0165 -0.0165 0">
+                            <inertial pos="0 0 0" mass="0.5324" diaginertia="0.00216882 0.00216882 0.00216882" />
+                            <joint name="back_left_leg2_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                            <geom size="0.11 0.011 0.0275" pos="0.103366 -0.011 0.0376222" quat="0.173648 0 0.984808 0" type="box" rgba="1 1 1 1" />
+                            <body name="back_left_leg1" pos="0.206732 0 0.0752444" quat="0.984808 0 -0.173648 0">
+                                <inertial pos="0 0 0" mass="8.5184" diaginertia="0.0588373 0.0588373 0.0588373" />
+                                <joint name="back_left_leg1_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-1.0472 1.0472" />
+                                <geom size="0.0165 0.0165 0.143" pos="0 0.0165 -0.143" type="box" rgba="1 1 1 1" />
+                                <body name="back_left_leg_tip" pos="0 0.0165 -0.297633">
+                                    <inertial pos="0 0 0" mass="0.21296" diaginertia="0.1 0.1 0.1" />
+                                    <geom size="0.0165" rgba="1 1 1 1" />
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+</mujoco>
