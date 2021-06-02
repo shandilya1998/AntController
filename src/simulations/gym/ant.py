@@ -37,7 +37,7 @@ class AntEnvV0(mujoco_env.MujocoEnv, utils.EzPickle):
         xposbefore = self.get_body_com("torso")[0]
         yposbefore = self.get_body_com("torso")[1]
         self.do_simulation(a, self.frame_skip)
-        self.render()
+        #self.render()
         xposafter = self.get_body_com("torso")[0]
         yposafter = self.get_body_com("torso")[1]
         forward_reward = (xposafter - xposbefore)/self.dt
@@ -201,7 +201,7 @@ class AntEnvV1(gym.GoalEnv, mujoco_env.MujocoEnv, utils.EzPickle):
         notdone = np.isfinite(state).all() \
             and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
-        self.render()
+        #self.render()
 
         self.achieved_goal = np.array([
             self.sim.data.qvel[0],
@@ -274,7 +274,7 @@ class AntEnvV2(AntEnvV1):
         notdone = np.isfinite(state).all() \
             and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
-        self.render()
+        #self.render()
 
         self.achieved_goal = posafter
 
@@ -395,7 +395,7 @@ class AntEnvV3(AntEnvV1):
         notdone = np.isfinite(state).all() \
             and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
-        self.render()
+        #self.render()
 
         self.achieved_goal = np.array([
             self.sim.data.qpos[0],
@@ -463,7 +463,7 @@ class AntEnvV3(AntEnvV1):
         return reward
 
 class AntEnvV4(AntEnvV1):
-    def __init__(self, path = '/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.xml'):
+    def __init__(self, path = '/home/ubuntu/AntController/src/simulations/gym/ant.xml'):
         super(AntEnvV4, self).__init__(path)
 
     def _set_action_space(self):
@@ -595,7 +595,7 @@ class AntEnvV4(AntEnvV1):
         return penalty
 
     def step(self, action):
-        if self._step_num % 500 == 0 or self._update == 0:
+        if self._step_num % 100 == 0 or self._update == 0:
             scale = np.ones((self.params['motion_state_size'],), dtype = np.float32)
             if self._update == 0:
                 scale[1:] = 0.0
@@ -615,7 +615,7 @@ class AntEnvV4(AntEnvV1):
         notdone = np.isfinite(state).all() \
             and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
-        self.render()
+        #self.render()
         """
         self.omega.append(self.sim.data.sensordata[:3].copy())
         self.acc.append(self.sim.data.sensordata[3:6].copy())
@@ -656,7 +656,7 @@ class AntEnvV4(AntEnvV1):
         info['reward_ctrl'] = np.exp(-np.square(np.linalg.norm(err[6:14]))) * self.w[2]
         info['reward_position'] = np.exp(-np.square(np.linalg.norm(err[14:17]))) * self.w[3]
         info['reward_orientation'] = np.exp(-np.square(geod_dist)) * self.w[4]
-        info['reward_motion'] = 0.0#np.linalg.norm(self.vel)
+        info['reward_motion'] = min(0.6, np.linalg.norm(self.vel))
         info['reward_contact'] = np.exp(-np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))) * self.w[6]
         info['reward_torque'] = np.exp(-np.square(np.linalg.norm(self.sim.data.actuator_force / 150))) * self.w[5]
         reward = info['reward_velocity'] + info['reward_rotation'] + \
@@ -699,7 +699,7 @@ class AntEnvV4(AntEnvV1):
         return reward
 
 class AntEnvV5(AntEnvV4):
-    def __init__(self, path = '/home/shandilya/Desktop/CNS/AntController/src/simulations/gym/ant.xml'):
+    def __init__(self, path = '/home/ubuntu/AntController/src/simulations/gym/ant.xml'):
         super(AntEnvV5, self).__init__(path)
 
     def _set_action_space(self):

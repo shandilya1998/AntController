@@ -5,7 +5,7 @@ import gym
 import numpy as np
 import matplotlib.pyplot as plt
 import stable_baselines3
-from stable_baselines3 import TD3, HerReplayBuffer, PPO, SAC
+from stable_baselines3 import TD3, HerReplayBuffer, PPO, SAC, A2C
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.results_plotter import load_results, ts2xy
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
@@ -181,6 +181,11 @@ if __name__ == '__main__':
         help = 'choice to use SAC instead of TD3'
     )
     parser.add_argument(
+        '--a2c',
+        nargs='?', type = int, const = 1,
+        help = 'choice to use A2C instead of TD3'
+    )
+    parser.add_argument(
         '--standard',
         nargs='?', type = int, const = 1,
         help = 'choice to use standard policies instead of custom policies for baselines'
@@ -224,12 +229,12 @@ if __name__ == '__main__':
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=0.2 * np.ones(n_actions))
     # Create the callback: check every 1000 steps
     # Create RL model
-    batch_size = 100
+    batch_size = 128
     # Train the agent
     callback = SaveOnBestTrainingRewardCallback(env, batch_size, check_freq=6000, log_dir=log_dir, verbose = 1)
 
     model = None
-    if args.ppo is None:
+    if args.ppo is None and args.a2c is None:
         policy = TD3Policy
         if args.standard is not None:
             policy = 'MlpPolicy'
@@ -256,7 +261,7 @@ if __name__ == '__main__':
                 if int(args.env_version) == 4:
                     policy = MultiInputPolicyV2
                 elif int(args.env_version) == 5:
-                    policy = ultiInputPolicyV3
+                    policy = MultiInputPolicyV3
             if args.standard is not None or args.sac is not None:
                 policy = 'MultiInputPolicy'
             print('[DDPG] MultiInputPolicy')
@@ -310,15 +315,28 @@ if __name__ == '__main__':
 
             },
             tensorboard_log = log_dir,
-            verbose = 1,
+            verbose = 2,
+            batch_size = batch_size
+        )
+    elif args.a2c is not None:
+        model = A2C(
+            policy = 'MultiInputPolicy',
+            env = env,
+            policy_kwargs = {
+                'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
+                'activation_fn' : torch.nn.Tanh,
+
+            },
+            tensorboard_log = log_dir,
+            verbose = 2,
         )
 
 
     steps = 3e6
-    if args.ppo is not None:
+    if args.ppo is not None or args.a2c is not None:
         steps = 3e7
     model.learn(total_timesteps=int(steps), callback=callback)
-    model.save(log_dir + '/TD3Policy')
+    model.save(log_dir + '/Policy')
     torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
     torch.save(model.critic, os.path.join(log_dir, 'critic.pth'))
     torch.save(model.actor_target, os.path.join(log_dir, 'actor_target.pth'))
