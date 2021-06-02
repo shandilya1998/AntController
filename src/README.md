@@ -45,12 +45,10 @@ python3 ddpg.py --experiment 67 --out_path rl/out_dir/models --env AntEnv --env_
 - ctrl consists of joint angle positions
 - position consists of x coordinate, y coordinate, z coordinate
 - orientation consists of x angle, y angle, z angle
-- Action is tuple
-- using her
-- oscillator model
+- PPO model
 Run the following command to run:
 ```bash
-python3 ddpg.py --experiment 68 --out_path rl/out_dir/models --env AntEnv --env_version 4 --her
+python3 ddpg.py --experiment 68 --out_path rl/out_dir/models --env AntEnv --env_version 5 --ppo
 ```
 
 ## Experiment 69
@@ -62,9 +60,23 @@ python3 ddpg.py --experiment 68 --out_path rl/out_dir/models --env AntEnv --env_
 - position consists of x coordinate, y coordinate, z coordinate
 - orientation consists of x angle, y angle, z angle
 - Action is 8 dimensional
-- using her
-- fully connected model; no oscillators
+- SAC using her
 Run the following command to run:
 ```bash
-python3 ddpg.py --experiment 69 --out_path rl/out_dir/models --env AntEnv --env_version 5 --her
+python3 ddpg.py --experiment 69 --out_path rl/out_dir/models --env AntEnv --env_version 5 --her --sac
+```
+
+## Experiment 70
+- omnidirectional walking at constant speed and yaw velocity
+- 20 dimensional dict goal
+- goal consists of 'command', 'ctrl', 'position', 'orientation'
+- command consists of x velocity, y velocity, z velcoity, roll velocity, pitch velocity, yaw velocity
+- ctrl consists of joint angle positions
+- position consists of x coordinate, y coordinate, z coordinate
+- orientation consists of x angle, y angle, z angle
+- Action is 8 dimensional
+- Using A2C model
+Run the following command to run:
+```bash
+python3 ddpg.py --experiment 70 --out_path rl/out_dir/models --env AntEnv --env_version 5 --a2c
 ```
