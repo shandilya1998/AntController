@@ -523,7 +523,7 @@ class AntEnvV4(AntEnvV1):
         self.omega = self.sim.data.qvel[3:6]
         self.acc = self.sim.data.qacc[:3]
         self.last_action = self.init_qpos[-8:]
-        self.last_torque = np.zeros_like(self.sim.data.actuator_force)
+        self.last_torque = np.zeros_like(self.sim.data.actuator_force / 150)
         self.desired_goal = np.concatenate([
             self.command,
             np.zeros((8,), dtype = np.float32),
@@ -573,10 +573,10 @@ class AntEnvV4(AntEnvV1):
 
     def _create_command_lst(self):
         self.commands = []
-        delta = 0.001
-        forward_vel = np.arange(-1.0, 1.0, 0.01)
-        lateral_vel = [-0.5, 0.0, 0.5]
-        yaw = np.arange(0.0, 0.5, 0.05)
+        delta = 0.01
+        forward_vel = np.arange(-0.4, 0.4, delta).tolist()
+        lateral_vel = np.arange(-0.4, 0.4, delta).tolist()
+        yaw = np.arange(-0.3, 0.3, delta).tolist()
         for xvel in forward_vel:
             for yvel in lateral_vel:
                 for yw in yaw:
@@ -660,17 +660,17 @@ class AntEnvV4(AntEnvV1):
         self.ob = self._get_obs()
         err = self._get_goal_error()
         geod_dist = 1 - np.square(np.sum(self.achieved_goal[17:21] * self.desired_goal[17:21], -1))
-        info['reward_velocity'] = 5 * self.K(np.sum(np.abs(err[:3]), -1))
-        info['reward_rotation']=  5 * self.K(np.sum(np.abs(err[3:6]), -1))
-        info['reward_torque'] = -0.005 * self.dt * self.kc * np.square(np.linalg.norm(self.sim.data.actuator_force))
+        info['reward_velocity'] = self.K(np.sum(np.abs(err[0]), -1)) + self.K(np.sum(np.abs(err[1]), -1)) + self.K(np.sum(np.abs(err[2]), -1))
+        info['reward_rotation'] = self.K(np.sum(np.abs(err[3]), -1)) + self.K(np.sum(np.abs(err[4]), -1)) + self.K(np.sum(np.abs(err[5]), -1))
+        info['reward_torque'] = -0.005 * self.dt * self.kc * np.square(np.linalg.norm(self.sim.data.actuator_force.copy() / 150))
         info['reward_ctrl'] = -0.03 * self.dt * self.kc * np.square(np.linalg.norm(self.achieved_goal[6:14]))
         info['reward_position'] = -0.1 * self.dt * np.square(np.linalg.norm(err[14:17]))
         info['reward_orientation'] = -0.4 * self.dt * self.kc * np.square(geod_dist)
-        info['reward_motion'] = np.linalg.norm(self.vel)
+        info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 0.6 else -0.1
         info['reward_contact'] = -self.kc * 2.0 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
-            info['reward_orientation'] + \
+            info['reward_orientation'] + info['reward_motion'] + \
             info['reward_contact'] + info['reward_torque']
         info['reward'] = reward
         self.desired_goal[14:17] += self.desired_goal[:3] * self.dt
@@ -697,14 +697,14 @@ class AntEnvV4(AntEnvV1):
         }
         err = achieved_goal - desired_goal
         geod_dist = 1 - np.square(np.sum(achieved_goal[:, 17:21] * desired_goal[:, 17:21], -1))
-        info['reward_velocity'] = 5 * self.K(self.dt * np.sum(np.abs(err[:,:3]), -1))
-        info['reward_rotation']= 5 * self.K(np.sum(np.abs(err[:,3:6]), -1))
+        info['reward_velocity'] = self.K(np.sum(np.abs(err[:, 0]), -1)) + self.K(np.sum(np.abs(err[:, 1]), -1)) + self.K(np.sum(np.abs(err[:, 2]), -1))
+        info['reward_rotation'] = self.K(np.sum(np.abs(err[:, 3]), -1)) + self.K(np.sum(np.abs(err[:, 4]), -1)) + self.K(np.sum(np.abs(err[:, 5]), -1))
         info['reward_ctrl'] = -0.03 * self.dt * self.kc * np.square(np.linalg.norm(achieved_goal[:, 6:14]))
-        info['reward_position'] = -0.1 * self.dt * np.square(np.linalg.norm(err[:, 14:17], -1))
+        info['reward_position'] = -0.1 * self.dt * np.square(np.linalg.norm(err[:, 14:17], -1)) + np.linalg.norm(achieved_goal[:, 14:16], -1)
         info['reward_orientation'] = -0.4 * self.dt * self.kc * np.square(geod_dist)
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
-            info['reward_orientation'] + \
+            info['reward_orientation'] + info['reward_motion'] + \
             info['reward_contact'] + info['reward_torque']
         return reward
 
@@ -713,8 +713,8 @@ class AntEnvV5(AntEnvV4):
         super(AntEnvV5, self).__init__(path)
 
     def _set_action_space(self):
-        self.kc = 0.1
-        self.kd = 0.997
+        self.kc = 0.075
+        self.kd = 0.999
         self._step_num = 0
         self._update = 0
         self.params = params
@@ -750,7 +750,7 @@ class AntEnvV5(AntEnvV4):
         return np.concatenate([
             self.sim.data.sensordata[3:6],
             np.clip(self.sim.data.cfrc_ext, -1, 1).flat,
-            self.sim.data.actuator_force / 150,
+            self.sim.data.actuator_force.copy() / 150,
             self.last_action
         ], -1)
 

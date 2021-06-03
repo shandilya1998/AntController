@@ -383,9 +383,7 @@ if __name__ == '__main__':
             )
 
 
-    steps = 2e6
-    if args.ppo is not None or args.a2c is not None or args.sac is not None:
-        steps = 1e7
+    steps = 1e6
     model.learn(total_timesteps=int(steps), callback=callback)
     model.save(log_dir + '/Policy')
     if args.ppo is not None or args.a2c is not None:
@@ -402,9 +400,3 @@ if __name__ == '__main__':
         torch.save(model.actor_target, os.path.joint(log_dir, 'actor_target.pth'))
 
 
-    from stable_baselines3.common import results_plotter
-
-    # Helper from the library
-    #results_plotter.plot_results([log_dir], 1e5, results_plotter.X_TIMESTEPS, "DDPG Ant-v4")
-    print(stable_baselines3.common.evaluation.evaluate_policy(model_2, env, render=True))
-    print('DONE')
