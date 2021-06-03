@@ -661,7 +661,7 @@ class AntEnvV4(AntEnvV1):
         info['reward_torque'] = np.exp(-np.square(np.linalg.norm(self.sim.data.actuator_force / 150))) * self.w[5]
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
-            info['reward_orientation'] + info['reward_motion'] + \
+            info['reward_orientation'] + \
             info['reward_contact'] + info['reward_torque']
         info['reward'] = reward
         self.desired_goal[14:17] += self.desired_goal[:3] * self.dt
@@ -694,7 +694,7 @@ class AntEnvV4(AntEnvV1):
         info['reward_orientation'] = np.exp(-np.square(geod_dist)) * self.w[4]
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
-            info['reward_orientation'] + info['reward_motion'] + \
+            info['reward_orientation'] + \
             info['reward_contact'] + info['reward_torque']
         return reward
 

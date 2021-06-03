@@ -234,14 +234,11 @@ if __name__ == '__main__':
     callback = SaveOnBestTrainingRewardCallback(env, batch_size, check_freq=6000, log_dir=log_dir, verbose = 1)
 
     model = None
-    if args.ppo is None and args.a2c is None:
+    if args.ppo is None and args.a2c is None and args.sac is None:
         policy = TD3Policy
         if args.standard is not None:
             policy = 'MlpPolicy'
         model_class = TD3
-        if args.sac is not None:
-            model_class = SAC
-            policy = 'MlpPolicy'
         if int(args.env_version) == 0:
             model = model_class(
                 policy,
@@ -311,12 +308,20 @@ if __name__ == '__main__':
             env = env,
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
-                'activation_fn' : torch.nn.Tanh,
-
+                'activation_fn' : torch.nn.PReLU,
+                'log_std_init' : -1,
+                'ortho_init' : False
             },
             tensorboard_log = log_dir,
             verbose = 2,
-            batch_size = batch_size
+            batch_size = batch_size,
+            use_sde = True,
+            sde_sample_freq = 4,
+            n_epochs = 20,
+            n_steps = params['rnn_steps'] * params['max_steps'],
+            gae_lambda = 0.9,
+            clip_range = 0.4,
+
         )
     elif args.a2c is not None:
         model = A2C(
@@ -325,16 +330,62 @@ if __name__ == '__main__':
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
                 'activation_fn' : torch.nn.Tanh,
-
+                'log_std_init' : -2,
+                'ortho_init' : False
             },
             tensorboard_log = log_dir,
             verbose = 2,
+            n_steps = 8,
+            gae_lambda = 0.9,
+            vf_coef=0.4,
+            learning_rate = 0.00096,
+            use_sde = True,
+            normalize_advantage=True,
         )
+    elif args.sac is not None:
+        if args.her is None:
+            model = SAC(
+                'MultiInputPolicy',
+                env,
+                learning_starts=10000,
+                action_noise = action_noise,
+                verbose = 2,
+                tensorboard_log = log_dir,
+                batch_size = batch_size,
+                gamma = 0.98,
+                tau = 0.02,
+                train_freq = 64,
+                gradient_steps = 64,
+                use_sde = True
+            )
+        else:
+            print('[DDPG] Using HER')
+            model = SAC(
+                'MultiInputPolicy',
+                env,
+                replay_buffer_class = HerReplayBuffer,
+                replay_buffer_kwargs = dict(
+                    n_sampled_goal=4,
+                    goal_selection_strategy='future',
+                    online_sampling=True,
+                    max_episode_length = params['rnn_steps'] * params['max_steps'],
+                ),
+                learning_starts=10000,
+                action_noise = action_noise,
+                verbose = 2,
+                tensorboard_log = log_dir,
+                batch_size = batch_size,
+                gamma = 0.98,
+                tau = 0.02,
+                train_freq = 64,
+                gradient_steps = 64,
+                use_sde = True
+            )
 
 
-    steps = 3e6
-    if args.ppo is not None or args.a2c is not None:
-        steps = 3e7
+    steps = 2e6
+    if args.ppo is not None or args.a2c is not None or args.sac is not None:
+        steps = 1e7
     model.learn(total_timesteps=int(steps), callback=callback)
     model.save(log_dir + '/Policy')
     torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
