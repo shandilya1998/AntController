@@ -650,10 +650,13 @@ class AntEnvV4(AntEnvV1):
         info['reward_orientation'] = -0.4 * self.dt * self.kc * np.square(geod_dist)
         info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 0.6 else -0.1
         info['reward_contact'] = -self.kc * 2.0 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
+        """
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
             info['reward_orientation'] + info['reward_motion'] + \
             info['reward_contact'] + info['reward_torque']
+        """
+        reward = info['reward_position']
         info['reward'] = reward
         self.desired_goal[14:17] += self.desired_goal[:3] * self.dt
         self.desired_goal[17:21] = skin.quat.unit_q(skin.quat.deg2quat(
