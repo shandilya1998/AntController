@@ -190,6 +190,11 @@ if __name__ == '__main__':
         nargs='?', type = int, const = 1,
         help = 'choice to use standard policies instead of custom policies for baselines'
     )
+    parser.add_argument(
+        '--evaluate',
+        nargs='?', type = int, const = 1,
+        help = 'choice to evaluate or train'
+    )
     args = parser.parse_args()
     path = os.path.join(args.out_path, 'exp{}'.format(args.experiment))
     if not os.path.exists(path):
@@ -384,19 +389,21 @@ if __name__ == '__main__':
 
 
     steps = 1e6
-    model.learn(total_timesteps=int(steps), callback=callback)
-    model.save(log_dir + '/Policy')
-    if args.ppo is not None or args.a2c is not None:
-        torch.save(model.policy.action_net, os.path.join(log_dir, 'action_net.pth'))
-        torch.save(model.policy.value_net, os.path.join(log_dir, 'value_net.pth'))
-    elif args.sac is not None:
-        torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
-        torch.save(model.critic, os.path.join(log_dir, 'critic.pth'))
-        torch.save(model.critic_target, os.path.join(log_dir, 'critic_target.pth'))
+    if args.evaluate is None:
+        model.learn(total_timesteps=int(steps), callback=callback)
+        model.save(log_dir + '/Policy')
+        if args.ppo is not None or args.a2c is not None:
+            torch.save(model.policy.action_net, os.path.join(log_dir, 'action_net.pth'))
+            torch.save(model.policy.value_net, os.path.join(log_dir, 'value_net.pth'))
+        elif args.sac is not None:
+            torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
+            torch.save(model.critic, os.path.join(log_dir, 'critic.pth'))
+            torch.save(model.critic_target, os.path.join(log_dir, 'critic_target.pth'))
+        else:
+            torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
+            torch.save(model.critic, os.path.join(log_dir, 'critic.pth'))
+            torch.save(model.critic_target, os.path.join(log_dir, 'critic_target.pth'))
+            torch.save(model.actor_target, os.path.joint(log_dir, 'actor_target.pth'))
     else:
-        torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
-        torch.save(model.critic, os.path.join(log_dir, 'critic.pth'))
-        torch.save(model.critic_target, os.path.join(log_dir, 'critic_target.pth'))
-        torch.save(model.actor_target, os.path.joint(log_dir, 'actor_target.pth'))
-
-
+        model.load(log_dir + '/Policy')
+        print(stable_baselines3.common.evaluation.evaluate_policy(model, env, render=True))
