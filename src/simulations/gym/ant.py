@@ -670,7 +670,7 @@ class AntEnvV4(AntEnvV1):
         info['reward_contact'] = -self.kc * 2.0 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
-            info['reward_orientation'] + info['reward_motion'] + \
+            info['reward_orientation'] + \
             info['reward_contact'] + info['reward_torque']
         info['reward'] = reward
         self.desired_goal[14:17] += self.desired_goal[:3] * self.dt
@@ -697,14 +697,14 @@ class AntEnvV4(AntEnvV1):
         }
         err = achieved_goal - desired_goal
         geod_dist = 1 - np.square(np.sum(achieved_goal[:, 17:21] * desired_goal[:, 17:21], -1))
-        info['reward_velocity'] = 5 * self.K(self.dt * np.sum(np.linalg.abs(err[:,:3]), -1))
+        info['reward_velocity'] = 5 * self.K(self.dt * np.sum(np.abs(err[:,:3]), -1))
         info['reward_rotation']= 5 * self.K(np.sum(np.abs(err[:,3:6]), -1))
         info['reward_ctrl'] = -0.03 * self.dt * self.kc * np.square(np.linalg.norm(achieved_goal[:, 6:14]))
         info['reward_position'] = -0.1 * self.dt * np.square(np.linalg.norm(err[:, 14:17], -1))
         info['reward_orientation'] = -0.4 * self.dt * self.kc * np.square(geod_dist)
         reward = info['reward_velocity'] + info['reward_rotation'] + \
             info['reward_ctrl'] + info['reward_position'] + \
-            info['reward_orientation'] + info['reward_motion'] + \
+            info['reward_orientation'] + \
             info['reward_contact'] + info['reward_torque']
         return reward
 
