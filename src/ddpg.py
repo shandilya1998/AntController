@@ -405,5 +405,13 @@ if __name__ == '__main__':
             torch.save(model.critic_target, os.path.join(log_dir, 'critic_target.pth'))
             torch.save(model.actor_target, os.path.joint(log_dir, 'actor_target.pth'))
     else:
-        model.load(log_dir + '/Policy')
+        model = None
+        if args.ppo is not None:
+            model = PPO.load(log_dir + '/Policy', env = env)
+        elif args.sac is not None:
+            model = SAC.load(log_dir + 'Policy', env = env)
+        elif args.a2c is not None:
+            model = A2C.load(log_dir + '/Policy', env = env)
+        else:
+            model = TD3.load(log_dir + '/Policy', env = env)
         print(stable_baselines3.common.evaluation.evaluate_policy(model, env, render=True))
