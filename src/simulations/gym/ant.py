@@ -595,7 +595,6 @@ class AntEnvV4(AntEnvV1):
             penalty = -5.0
         #print(action[:self.params['action_dim']])
         self.desired_goal[6:14] = (ac - self.last_action) / self.dt
-        self.last_torque = self.sim.data.actuator_force.copy() / 150
         self.do_simulation(ac, self.frame_skip)
         self.last_action = ac
         self.osc = action[self.params['action_dim']:]
@@ -624,23 +623,6 @@ class AntEnvV4(AntEnvV1):
             and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
         #self.render()
-        """
-        self.omega.append(self.sim.data.sensordata[:3].copy())
-        self.acc.append(self.sim.data.sensordata[3:6].copy())
-        if len(self.omega) ==1:
-            self.omega.append(self.sim.data.sensordata[:3].copy())
-        if len(self.acc) == 1:
-            self.acc.append(self.sim.data.sensordata[3:6].copy())
-        q, pos, vel = skin.imus.analytical(
-            omega = np.stack(self.omega, 0),
-            accMeasured = np.stack(self.acc, 0),
-            rate = 1000,
-            initialPosition = self.init_qpos[:3]
-        )
-        self.q = q[-1]
-        self.pos = pos[-1]
-        self.vel = vel[-1]
-        """
         self.pos = posafter
         self.q = self.sim.data.qpos[3:7].copy()
         self.vel = (posafter - posbefore) / self.dt
@@ -762,6 +744,95 @@ class AntEnvV5(AntEnvV4):
             action = np.zeros(shape = action.shape, dtype = action.dtype)
             penalty = -5.0
         #print(action[:self.params['action_dim']])
-        self.desired_goal[6:14] = action
+        self.desired_goal[6:14] = (action - self.last_action) / self.dt
         self.do_simulation(action, self.frame_skip)
+        self.last_action = action
         return penalty
+
+class AntEnvV6(AntEnvV5):
+    def step(self, action):
+        if self._step_num % 100 == 0 or self._update == 0:
+            scale = np.ones((self.params['motion_state_size'],), dtype = np.float32)
+            if self._update == 0:
+                scale[1:] = 0.0
+            self._update += 1
+            self.desired_goal[:6] = self.command * scale
+        self._step_num += 1
+        #print(action)
+        posbefore = self.get_body_com("torso").copy()
+        jointposbefore = self.sim.data.qpos[-8:].copy()
+        penalty = self.perform_action(action)
+        posafter = self.get_body_com("torso").copy()
+        jointposafter = self.sim.data.qpos[-8:].copy()
+        info = {}
+        state = self.state_vector()
+        notdone = np.isfinite(state).all() \
+            and state[2] >= 0.2 and state[2] <= 1.0
+        done = not notdone
+        #self.render()
+        self.pos = posafter
+        self.q = self.sim.data.qpos[3:7].copy()
+        self.vel = (posafter - posbefore) / self.dt
+        self.omega = self.sim.data.sensordata[:3]
+        self.acc = self.sim.data.qacc[:3].copy()
+        self.joint_vel = (jointposafter - jointposbefore)/self.dt
+        self.achieved_goal = np.concatenate([
+            np.concatenate([
+                self.vel,
+                self.omega
+            ], -1),
+            self.joint_vel,
+            self.pos,
+            self.q
+        ], -1)
+
+        self.ob = self._get_obs()
+        err = self._get_goal_error()
+        geod_dist = 1 - np.square(np.sum(self.achieved_goal[17:21] * self.desired_goal[17:21], -1))
+        info['reward_velocity'] = self.K(np.sum(np.abs(err[0]), -1)) + self.K(np.sum(np.abs(err[1]), -1)) + self.K(np.sum(np.abs(err[2]), -1))
+        info['reward_rotation'] = self.K(np.sum(np.abs(err[3]), -1)) + self.K(np.sum(np.abs(err[4]), -1)) + self.K(np.sum(np.abs(err[5]), -1))
+        info['reward_torque'] = -0.005 * self.dt * self.kc * np.square(np.linalg.norm(self.sim.data.actuator_force.copy() / 150))
+        info['reward_ctrl'] = -0.03 * self.dt * self.kc * np.square(np.linalg.norm(self.achieved_goal[6:14]))
+        info['reward_position'] = -0.1 * self.dt * np.square(np.linalg.norm(err[14:17]))
+        info['reward_orientation'] = -0.4 * self.dt * self.kc * np.square(geod_dist)
+        info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 0.6 else -0.1
+        info['reward_contact'] = -self.kc * 2.0 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
+        reward = info['reward_velocity'] + info['reward_rotation'] + \
+            info['reward_ctrl'] + info['reward_position'] + \
+            info['reward_orientation'] + info['reward_motion'] + \
+            info['reward_contact'] + info['reward_torque']
+        info['reward'] = reward
+        self.desired_goal[14:17] += self.desired_goal[:3] * self.dt
+        self.desired_goal[17:21] = skin.quat.unit_q(skin.quat.deg2quat(
+            skin.quat.quat2deg(
+                self.desired_goal[17:21]
+            ) + self.desired_goal[3:6] * self.dt
+        ))
+        self.kc = self.kc ** self.kd
+        #print({'observation' : self.ob, 'desired_goal' : self.desired_goal, 'achieved_goal' : self.achieved_goal})
+        return {'observation' : self.ob, 'desired_goal' : self.desired_goal, 'achieved_goal' : self.achieved_goal}, reward, done, info
+
+    def compute_reward(self, achieved_goal, desired_goal, info):
+        out = {}
+        for item in info:
+            for key in item.keys():
+                if key in out.keys():
+                    out[key].append(item[key])
+                else:
+                    out[key] = [item[key]]
+        info = {
+            key : np.array(out[key], dtype = np.float32) \
+                for key in out.keys()
+        }
+        err = achieved_goal - desired_goal
+        geod_dist = 1 - np.square(np.sum(achieved_goal[:, 17:21] * desired_goal[:, 17:21], -1))
+        info['reward_velocity'] = self.K(np.sum(np.abs(err[:, 0]), -1)) + self.K(np.sum(np.abs(err[:, 1]), -1)) + self.K(np.sum(np.abs(err[:, 2]), -1))
+        info['reward_rotation'] = self.K(np.sum(np.abs(err[:, 3]), -1)) + self.K(np.sum(np.abs(err[:, 4]), -1)) + self.K(np.sum(np.abs(err[:, 5]), -1))
+        info['reward_ctrl'] = -0.03 * self.dt * self.kc * np.square(np.linalg.norm(achieved_goal[:, 6:14]))
+        info['reward_position'] = -0.1 * self.dt * np.square(np.linalg.norm(err[:, 14:17], -1)) + np.linalg.norm(achieved_goal[:, 14:16], -1)
+        info['reward_orientation'] = -0.4 * self.dt * self.kc * np.square(geod_dist)
+        reward = info['reward_velocity'] + info['reward_rotation'] + \
+            info['reward_ctrl'] + info['reward_position'] + \
+            info['reward_orientation'] + info['reward_motion'] + \
+            info['reward_contact'] + info['reward_torque']
+        return reward
