@@ -419,13 +419,16 @@ if __name__ == '__main__':
             "lr_schedule": lambda _: 0.0,
             "clip_range": lambda _: 0.0,
         })
+        device = 'cpu'
+        if torch.cuda.is_available():
+            device = 'gpu'
         if args.ppo is not None or args.a2c is not None:
-            model.policy.action_net.load_state_dict(torch.load(os.path.join(log_dir, 'action_net.pth')))
-            model.policy.value_net.load_state_dict(torch.load(os.path.join(log_dir, 'value_net.pth')))
+            model.policy.action_net.load_state_dict(torch.load(os.path.join(log_dir, 'action_net.pth'), map_location=torch.device('cpu')))
+            model.policy.value_net.load_state_dict(torch.load(os.path.join(log_dir, 'value_net.pth'), map_location=torch.device('cpu')))
         else:
-            model.actor.load_state_dict(torch.load(os.path.join(log_dir, 'actor.pth')))
-            model.critic.load_state_dict(torch.load(os.path.join(log_dir, 'critic.pth')))
-            model.critic_target.load_state_dict(torch.load(os.path.join(log_dir, 'critic_target.pth')))
+            model.actor.load_state_dict(torch.load(os.path.join(log_dir, 'actor.pth'), map_location=torch.device('cpu')))
+            model.critic.load_state_dict(torch.load(os.path.join(log_dir, 'critic.pth'), map_location=torch.device('cpu')))
+            model.critic_target.load_state_dict(torch.load(os.path.join(log_dir, 'critic_target.pth'), map_location=torch.device('cpu')))
             if args.sac is None:
-                model.actor_target.load_state_dict(torch.load(os.path.join(log_dir, 'actor_target.pth')))
+                model.actor_target.load_state_dict(torch.load(os.path.join(log_dir, 'actor_target.pth'), map_location=torch.device('cpu')))
         print(stable_baselines3.common.evaluation.evaluate_policy(model, env, render=True))
