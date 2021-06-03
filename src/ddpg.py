@@ -419,4 +419,13 @@ if __name__ == '__main__':
             "lr_schedule": lambda _: 0.0,
             "clip_range": lambda _: 0.0,
         })
+        if args.ppo is not None or args.a2c is not None:
+            model.policy.action_net.load_state_dict(torch.load(os.path.join(log_dir, 'action_net.pth')))
+            model.policy.value_net.load_state_dict(torch.load(os.path.join(log_dir, 'value_net.pth')))
+        else:
+            model.actor.load_state_dict(torch.load(os.path.join(log_dir, 'actor.pth')))
+            model.critic.load_state_dict(torch.load(os.path.join(log_dir, 'critic.pth')))
+            model.critic_target.load_state_dict(torch.load(os.path.join(log_dir, 'critic_target.pth')))
+            if args.sac is None:
+                model.actor_target.load_state_dict(torch.load(os.path.join(log_dir, 'actor_target.pth')))
         print(stable_baselines3.common.evaluation.evaluate_policy(model, env, render=True))
