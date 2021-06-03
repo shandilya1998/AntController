@@ -5,7 +5,7 @@ action_dim = 8
 units_osc = action_dim #60#action_dim#60 exp 68 units_osc = 8
 params = {
     'motion_state_size'           : 6,#:exp69, 6,#:exp 67,68, 3 #:exp66, 4 :exp64,65,
-    'robot_state_size'            : ,#:exp69, 111,#:exp67,68, 111 for stable_baselines model #4*action_dim + 4 + 8*3,
+    'robot_state_size'            : 45,#:exp69, 111,#:exp67,68, 111 for stable_baselines model #4*action_dim + 4 + 8*3,
     'dt'                          : 0.01,
     'units_output_mlp'            : [60,100, 100, action_dim],
     'units_osc'                   : units_osc,
