@@ -23,7 +23,8 @@ info_kwargs = (
     'reward_ctrl',
     'reward_motion',
     'reward_torque',
-    'reward_velocity'
+    'reward_velocity',
+    'reward_contact'
 )
 
 class SaveOnBestTrainingRewardCallback(BaseCallback):
@@ -65,7 +66,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                 #reward_rotation = np.mean(df.reward_rotation.values[-100:])
                 reward_ctrl = np.mean(df.reward_ctrl.values[-100:])
                 reward_motion = np.mean(df.reward_motion.values[-100:])
-                #reward_contact = np.mean(df.reward_contact.values[-100:])
+                reward_contact = np.mean(df.reward_contact.values[-100:])
                 reward_torque = np.mean(df.reward_torque.values[-100:])
                 reward = np.mean(df.reward.values[-100:])
                 self.logger.record('reward_position', reward_position)
@@ -75,7 +76,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                 self.logger.record('reward_ctrl', reward_ctrl)
                 self.logger.record('reward', reward)
                 self.logger.record('reward_motion', reward_motion)
-                #self.logger.record('reward_contact', reward_contact)
+                self.logger.record('reward_contact', reward_contact)
                 self.logger.record('reward_torque', reward_torque)
         if self.n_calls % self.check_freq == 0:
             # Retrieve training reward

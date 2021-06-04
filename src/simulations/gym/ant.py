@@ -875,8 +875,8 @@ class AntEnvV7(AntEnvV4):
         self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype),
         bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
         low, high = bounds.T
-        self.low = low * 0.1
-        self.high = high * 0.1
+        self.low = low * 0.02
+        self.high = high * 0.02
         self.action_space = spaces.Box(low=self.low, high=self.high, dtype=np.float32)
         return self.action_space
 
@@ -953,12 +953,13 @@ class AntEnvV7(AntEnvV4):
         info['reward_position'] = np.sum(np.array([
             np.linalg.norm(self.last_positions[i] - self.last_positions[i - 1]) for i in range(1,4)
         ]))
-        info['reward_ctrl'] = np.exp(-np.linalg.norm(self.joint_pos - self.sim.data.qpos[-8:])) + np.square(np.linalg.norm(self.action))
+        info['reward_ctrl'] = 0.6 * np.exp(-np.linalg.norm(self.joint_pos - self.sim.data.qpos[-8:])) + 0.4 * np.square(np.linalg.norm(self.action))
         info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 1.0 else -0.1
+        info['reward_contact'] = -2.0 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)
-        reward = info['reward_ctrl'] + info['reward_torque'] + info['reward_motion'] + info['reward_position'] + info['reward_velocity']
+        reward = info['reward_ctrl'] + info['reward_torque'] + info['reward_motion'] + info['reward_position'] + info['reward_velocity'] + info['reward_contact']
         info['reward'] = reward
         self.ob = self._get_obs()
         return {'observation' : self.ob, 'desired_goal' : self.desired_goal, 'achieved_goal' : self.achieved_goal}, reward, done, info
