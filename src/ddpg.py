@@ -18,7 +18,6 @@ from rl.torch.constants import params
 
 
 info_kwargs = (
-    'reward_position',
     'reward',
     'reward_ctrl',
     'reward_motion',
@@ -60,7 +59,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
         if self.n_calls % 100 == 1:
             df = load_results(self.log_dir)
             if len(df) > 0:
-                reward_position = np.mean(df.reward_position.values[-100:])
+                #reward_position = np.mean(df.reward_position.values[-100:])
                 reward_velocity = np.mean(df.reward_velocity.values[-100:])
                 #reward_orientation = np.mean(df.reward_orientation.values[-100:])
                 #reward_rotation = np.mean(df.reward_rotation.values[-100:])
@@ -69,7 +68,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                 reward_contact = np.mean(df.reward_contact.values[-100:])
                 reward_torque = np.mean(df.reward_torque.values[-100:])
                 reward = np.mean(df.reward.values[-100:])
-                self.logger.record('reward_position', reward_position)
+                #self.logger.record('reward_position', reward_position)
                 self.logger.record('reward_velocity', reward_velocity)
                 #self.logger.record('reward_orientation', reward_orientation)
                 #self.logger.record('reward_rotation', reward_rotation)
