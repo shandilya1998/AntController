@@ -868,13 +868,16 @@ class AntEnvV7(AntEnvV4):
         self.acc = np.zeros((3,), dtype = np.float32)
         self.commands = self._create_command_lst()
         self.command = random.choice(self.commands)
+        self.joint_pos = self.init_qpos[-8:]
         self.last_actions = [self.init_qpos[-8:]] * 4
         self.last_positions = [self.pos] * 4
         self.desired_goal = self.command
         self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype),
         bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
         low, high = bounds.T
-        self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
+        self.low = low * 0.08
+        self.high = high * 0.08
+        self.action_space = spaces.Box(low=low * 0.08, high=high * 0.08, dtype=np.float32)
         return self.action_space
 
     def reset(self):
@@ -886,7 +889,8 @@ class AntEnvV7(AntEnvV4):
         self.vel = self.sim.data.qvel[:3]
         self.omega = self.sim.data.qvel[3:6]
         self.acc = self.sim.data.qacc[:3]
-        self.last_action = [self.init_qpos[-8:]] * 4
+        self.joint_pos = self.init_qpos[-8:]
+        self.last_actions = [self.init_qpos[-8:]] * 4
         self.last_positions = [self.init_qpos[:3]] * 4
         self.desired_goal = self.command
         self.achieved_goal = np.concatenate([
@@ -904,12 +908,15 @@ class AntEnvV7(AntEnvV4):
     def perform_action(self, action):
         penalty = 0.0
         #print(np.round(ac, 4))
-        if np.isnan(action[:self.params['action_dim']]).any():
+        self.action = np.clip(action, self.low, self.high)
+        self.joint_pos += self.action
+        self.joint_pos = np.clip(self.joint_pos, -1.5, 1.5)
+        if np.isnan(self.joint_pos).any():
             print('[DDPG] Action NaN')
-            action = np.zeros(shape = action.shape, dtype = action.dtype)
+            action = np.zeros(shape = self.joint_pos.shape, dtype = self.joint_pos.dtype)
             penalty = -5.0
         #print(action[:self.params['action_dim']])
-        self.do_simulation(action, self.frame_skip)
+        self.do_simulation(self.joint_pos, self.frame_skip)
         return penalty
 
     def step(self, action):
@@ -922,7 +929,7 @@ class AntEnvV7(AntEnvV4):
         done = not notdone
         posafter = self.get_body_com("torso").copy()
         self.last_actions.pop(0)
-        self.last_actions.append(action)
+        self.last_actions.append(self.joint_pos)
         if self._step_num % 100 == 0:
             self.last_positions.pop(0)
             self.last_positions.append(self.sim.data.qpos[:3])
@@ -942,12 +949,12 @@ class AntEnvV7(AntEnvV4):
             self.vel, self.omega
         ], -1)
         info['reward_velocity'] = np.exp(-np.linalg.norm(self.achieved_goal - self.desired_goal))
-        info['reward_torque'] = np.exp(-np.square(np.linalg.norm(self.sim.data.actuator_force / 100))) * 0.05
+        info['reward_torque'] = np.exp(-np.linalg.norm(self.sim.data.actuator_force / 100)) * 0.05
         info['reward_position'] = np.sum(np.array([
-            np.square(np.linalg.norm(self.last_positions[i] - self.last_positions[i - 1])) for i in range(1,4)
-        ])) * 0.1
-        info['reward_ctrl'] = np.exp(-np.square(np.linalg.norm(action - self.sim.data.qpos[-8:])))
-        info['reward_motion'] = min(100.0, np.square(np.linalg.norm(self.vel * 10.0))) * self.pos[2] * 0.15
+            np.linalg.norm(self.last_positions[i] - self.last_positions[i - 1]) for i in range(1,4)
+        ]))
+        info['reward_ctrl'] = np.exp(-np.linalg.norm(self.joint_pos - self.sim.data.qpos[-8:])) + np.square(np.linalg.norm(self.action))
+        info['reward_motion'] = min(100.0, np.square(np.linalg.norm(self.vel * 10.0)))
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)

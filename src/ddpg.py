@@ -310,7 +310,7 @@ if __name__ == '__main__':
             env = env,
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
-                'activation_fn' : torch.nn.PReLU,
+                'activation_fn' : torch.nn.Tanh,
                 'log_std_init' : -1,
                 'ortho_init' : False
             },
