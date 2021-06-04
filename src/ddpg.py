@@ -18,15 +18,12 @@ from rl.torch.constants import params
 
 
 info_kwargs = (
-    'reward_velocity',
-    'reward_rotation',
     'reward_position',
     'reward',
     'reward_ctrl',
-    'reward_orientation',
     'reward_motion',
-    'reward_contact',
-    'reward_torque'
+    'reward_torque',
+    'reward_velocity'
 )
 
 class SaveOnBestTrainingRewardCallback(BaseCallback):
@@ -64,25 +61,25 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
             if len(df) > 0:
                 reward_position = np.mean(df.reward_position.values[-100:])
                 reward_velocity = np.mean(df.reward_velocity.values[-100:])
-                reward_orientation = np.mean(df.reward_orientation.values[-100:])
-                reward_rotation = np.mean(df.reward_rotation.values[-100:])
+                #reward_orientation = np.mean(df.reward_orientation.values[-100:])
+                #reward_rotation = np.mean(df.reward_rotation.values[-100:])
                 reward_ctrl = np.mean(df.reward_ctrl.values[-100:])
                 reward_motion = np.mean(df.reward_motion.values[-100:])
-                reward_contact = np.mean(df.reward_contact.values[-100:])
+                #reward_contact = np.mean(df.reward_contact.values[-100:])
                 reward_torque = np.mean(df.reward_torque.values[-100:])
                 reward = np.mean(df.reward.values[-100:])
                 self.logger.record('reward_position', reward_position)
                 self.logger.record('reward_velocity', reward_velocity)
-                self.logger.record('reward_orientation', reward_orientation)
-                self.logger.record('reward_rotation', reward_rotation)
+                #self.logger.record('reward_orientation', reward_orientation)
+                #self.logger.record('reward_rotation', reward_rotation)
                 self.logger.record('reward_ctrl', reward_ctrl)
                 self.logger.record('reward', reward)
                 self.logger.record('reward_motion', reward_motion)
-                self.logger.record('reward_contact', reward_contact)
+                #self.logger.record('reward_contact', reward_contact)
                 self.logger.record('reward_torque', reward_torque)
         if self.n_calls % self.check_freq == 0:
             # Retrieve training reward
-            df = load_results(self.log_dir)
+            df = load_results(self.log_dir).dropna()
             x, y = ts2xy(df, 'timesteps')
             if len(x) > 0:
             # Mean training reward over the last 100 episodes
