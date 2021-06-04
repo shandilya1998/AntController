@@ -875,9 +875,9 @@ class AntEnvV7(AntEnvV4):
         self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype),
         bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
         low, high = bounds.T
-        self.low = low * 0.08
-        self.high = high * 0.08
-        self.action_space = spaces.Box(low=low * 0.08, high=high * 0.08, dtype=np.float32)
+        self.low = low * 0.1
+        self.high = high * 0.1
+        self.action_space = spaces.Box(low=self.low, high=self.high, dtype=np.float32)
         return self.action_space
 
     def reset(self):
@@ -925,14 +925,14 @@ class AntEnvV7(AntEnvV4):
         info = {}
         state = self.state_vector()
         notdone = np.isfinite(state).all() \
-            and state[2] >= 0.2 and state[2] <= 1.0 
+            and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
         posafter = self.get_body_com("torso").copy()
         self.last_actions.pop(0)
         self.last_actions.append(self.joint_pos)
         if self._step_num % 100 == 0:
             self.last_positions.pop(0)
-            self.last_positions.append(self.sim.data.qpos[:3])
+            self.last_positions.append(self.sim.data.qpos[:3].copy())
             scale = np.ones((self.params['motion_state_size'],), dtype = np.float32)
             if self._update == 0:
                 scale[1:] = 0.0
@@ -954,7 +954,7 @@ class AntEnvV7(AntEnvV4):
             np.linalg.norm(self.last_positions[i] - self.last_positions[i - 1]) for i in range(1,4)
         ]))
         info['reward_ctrl'] = np.exp(-np.linalg.norm(self.joint_pos - self.sim.data.qpos[-8:])) + np.square(np.linalg.norm(self.action))
-        info['reward_motion'] = min(100.0, np.square(np.linalg.norm(self.vel * 10.0)))
+        info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 1.0 else -0.1
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)
