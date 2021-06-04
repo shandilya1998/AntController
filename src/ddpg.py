@@ -19,7 +19,7 @@ from rl.torch.constants import params
 
 info_kwargs = (
     'reward',
-    'reward_ctrl',
+    #'reward_ctrl',
     'reward_motion',
     'reward_torque',
     'reward_velocity',
@@ -63,7 +63,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                 reward_velocity = np.mean(df.reward_velocity.values[-100:])
                 #reward_orientation = np.mean(df.reward_orientation.values[-100:])
                 #reward_rotation = np.mean(df.reward_rotation.values[-100:])
-                reward_ctrl = np.mean(df.reward_ctrl.values[-100:])
+                #reward_ctrl = np.mean(df.reward_ctrl.values[-100:])
                 reward_motion = np.mean(df.reward_motion.values[-100:])
                 reward_contact = np.mean(df.reward_contact.values[-100:])
                 reward_torque = np.mean(df.reward_torque.values[-100:])
@@ -72,7 +72,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                 self.logger.record('reward_velocity', reward_velocity)
                 #self.logger.record('reward_orientation', reward_orientation)
                 #self.logger.record('reward_rotation', reward_rotation)
-                self.logger.record('reward_ctrl', reward_ctrl)
+                #self.logger.record('reward_ctrl', reward_ctrl)
                 self.logger.record('reward', reward)
                 self.logger.record('reward_motion', reward_motion)
                 self.logger.record('reward_contact', reward_contact)
@@ -310,7 +310,7 @@ if __name__ == '__main__':
             env = env,
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
-                'activation_fn' : torch.nn.Tanh,
+                'activation_fn' : torch.nn.Sigmoid,
                 'log_std_init' : -1,
                 'ortho_init' : False
             },
@@ -331,7 +331,7 @@ if __name__ == '__main__':
             env = env,
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
-                'activation_fn' : torch.nn.Tanh,
+                'activation_fn' : torch.nn.Sigmoid,
                 'log_std_init' : -2,
                 'ortho_init' : False
             },

@@ -6,6 +6,7 @@ from rl.torch.constants import params
 import random
 from gym import utils, error, spaces
 import skinematics as skin
+np.seterr(all='raise')
 
 def convert_observation_to_space(observation):
     if isinstance(observation, dict):
@@ -861,6 +862,9 @@ class AntEnvV7(AntEnvV4):
         self.params = params
         self._step_num = 0
         self._update = 0
+        self.w = np.ones((5,), dtype = np.float32)
+        #remove the next statement later
+        self.w = np.array([1, 1, 0, 1, 0], dtype = np.float32)
         self.q = np.zeros((3,), dtype = np.float32)
         self.pos = self.init_qpos[:3]
         self.vel = np.zeros((3,), dtype = np.float32)
@@ -869,8 +873,8 @@ class AntEnvV7(AntEnvV4):
         self.commands = self._create_command_lst()
         self.command = random.choice(self.commands)
         self.joint_pos = self.init_qpos[-8:]
-        self.last_actions = [self.init_qpos[-8:]] * 4
-        self.last_positions = [self.pos] * 4
+        self.last_actions = [self.init_qpos[-8:]] * 5
+        self.last_positions = [self.pos] * 5
         self.desired_goal = self.command
         self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype),
         bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
@@ -948,11 +952,14 @@ class AntEnvV7(AntEnvV4):
         self.achieved_goal = np.concatenate([
             self.vel, self.omega
         ], -1)
-        info['reward_velocity'] = np.exp(-np.linalg.norm(self.achieved_goal - self.desired_goal))
-        info['reward_torque'] = -np.linalg.norm(self.sim.data.actuator_force / 100) * 0.5
-        info['reward_ctrl'] = 0.6 * np.exp(-np.linalg.norm(self.joint_pos - self.sim.data.qpos[-8:])) + 0.4 * np.square(np.linalg.norm(self.action))
+        info['reward_velocity'] = np.exp(-np.linalg.norm(self.achieved_goal - self.desired_goal)) * self.w[0]
+        info['reward_torque'] = -np.linalg.norm(self.sim.data.actuator_force / 100) * 0.5 * self.w[1]
+        info['reward_ctrl'] = np.exp(-np.linalg.norm(self.joint_pos - self.sim.data.qpos[-8:])) + \
+                np.linalg.norm(self.action / self.dt) if np.linalg.norm(self.action / self.dt) < 1.0 else -0.1
+        info['reward_ctrl'] = info['reward_ctrl'] * self.w[2]
         info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 1.0 else -0.1
-        info['reward_contact'] = -0.2 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
+        info['reward_motion'] = info['reward_motion'] * self.w[3]
+        info['reward_contact'] = -0.2 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat)) * self.w[4]
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)
@@ -960,6 +967,9 @@ class AntEnvV7(AntEnvV4):
         info['reward'] = reward
         self.ob = self._get_obs()
         return {'observation' : self.ob, 'desired_goal' : self.desired_goal, 'achieved_goal' : self.achieved_goal}, reward, done, info
+
+    def set_w(self, w):
+        self.w = w
 
     def _get_obs(self):
         return np.concatenate([
@@ -973,13 +983,28 @@ class AntEnvV7(AntEnvV4):
         ] + self.last_actions + self.last_positions, -1)
 
 class AntEnvV8(AntEnvV4):
-    def __init__(self):
-        super(AntEnvV8, self).__init__('ant.xml')
+
+    def _create_command_lst(self):
+        self.commands = []
+        delta = 0.01
+        xvel = np.arange(-1, -0.05, 0.01).tolist() + [0.0] + np.arange(0.05, 1, 0.01).tolist()
+        for x in xvel:
+            self.commands.append(np.array([x, 0.0, 0.0, 0.0, 0.0, 0.0], dtype = np.float32))
+        return self.commands
 
     def _set_action_space(self):
+        self._step = 0
+        self.T = 100
         self.params = params
-        self._step_num = 0
-        self._update = 0
+        self.phase = np.zeros((8,), dtype = np.float32)
+        self.bias = np.zeros((8,), dtype = np.float32)
+        self.omega = np.zeros((8,), dtype = np.float32)
+        self.amp = np.zeros((8,), dtype = np.float32)
+        self.beta = np.zeros((8,), dtype = np.float32)
+        self.last_phase = np.zeros((8,), dtype = np.float32)
+        self.last_bias = np.zeros((8,), dtype = np.float32)
+        self.last_amp = np.zeros((8,), dtype = np.float32)
+        self.w = np.array([1.0, 1.0, 1.0, 1.0], dtype = np.float32)
         self.q = np.zeros((3,), dtype = np.float32)
         self.pos = self.init_qpos[:3]
         self.vel = np.zeros((3,), dtype = np.float32)
@@ -988,27 +1013,27 @@ class AntEnvV8(AntEnvV4):
         self.commands = self._create_command_lst()
         self.command = random.choice(self.commands)
         self.joint_pos = self.init_qpos[-8:]
-        self.last_actions = [self.init_qpos[-8:]] * 4
-        self.last_positions = [self.pos] * 4
+        self.last_actions = [self.init_qpos[-8:]] * 5
+        self.last_positions = [self.pos] * 5
         self.desired_goal = self.command
-        self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype),
-        bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
-        low, high = bounds.T
+        self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype)
+        low = np.zeros((8 * 5,), dtype = np.float32)
+        high = np.ones((8 * 5,), dtype = np.float32)
         self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
         return self.action_space
 
     def reset(self):
         self.command = random.choice(self.commands)
         self._update = 0
-        self._step_num = 0
+        self._step = 0
         self.pos = self.sim.data.qpos[:3]
         self.q = skin.quat.quat2deg(self.sim.data.qpos[3:7])
         self.vel = self.sim.data.qvel[:3]
         self.omega = self.sim.data.qvel[3:6]
         self.acc = self.sim.data.qacc[:3]
         self.joint_pos = self.init_qpos[-8:]
-        self.last_actions = [self.init_qpos[-8:]] * 4
-        self.last_positions = [self.init_qpos[:3]] * 4
+        self.last_actions = [self.init_qpos[-8:]] * 5
+        self.last_positions = [self.init_qpos[:3]] * 5
         self.desired_goal = self.command
         self.achieved_goal = np.concatenate([
             self.vel,
@@ -1021,69 +1046,122 @@ class AntEnvV8(AntEnvV4):
             'desired_goal' : self.desired_goal,
             'achieved_goal' : self.achieved_goal
         }
-    def perform_action(self, action):
-        penalty = 0.0
-        #print(np.round(ac, 4))
-        if np.isnan(action).any():
-            print('[DDPG] Action NaN')
-            action = np.zeros(shape = action.shape, dtype = action.dtype)
-            penalty = -5.0
-        #print(action[:self.params['action_dim']])
-        self.do_simulation(action, self.frame_skip)
-        return penalty
 
     def _get_obs(self):
-        return np.concatenate([
-            self.acc,
-            np.clip(self.sim.data.cfrc_ext, -1, 1).flat,
-            self.sim.data.actuator_force.copy() / 150,
-            self.vel,
-            self.q,
-            self.pos,
-            self.omega
-        ] + self.last_actions + self.last_positions, -1)
+        return np.concatenate(self.last_actions + self.last_positions, -1)
+
+    def _get_hip_trajectory_point(self, t, phase, omega, beta, amp, bias):
+        omega_st = omega / (beta + 1e-8)
+        omega_sw = omega / (1 - beta + 1e-8)
+        phase = phase % (np.pi * 2)
+        ac = amp * np.sin(phase) * 0.7853 + (1 - amp) * 0.7853 * (2 * bias - 1)
+        if phase < np.pi / 2 or phase > 3 * np.pi / 2:
+            phase += omega_st * t * self.dt
+        else:
+            phase += omega_sw * t * self.dt
+        return ac, phase
+
+    def _get_knee_trajectory_point(self, t, phase, omega, beta, amp, bias):
+        omega_st = omega / (beta + 1e-8)
+        omega_sw = omega / (1 - beta + 1e-8)
+        phase = phase % (np.pi * 2)
+        ac = (1 - amp) * 0.8727 * (2 * bias - 1) + 0.3490
+        if phase < np.pi / 2 or phase > 3 * np.pi / 2:
+            phase += omega_st * t * self.dt
+        else:
+            phase += omega_sw * t * self.dt
+            ac += amp * np.cos(phase) * 0.8727
+        return ac, phase
+
+    def _param_to_activation(self, t, phase, omega, beta, amp, bias):
+        ac = []
+        for i in range(self.params['action_dim']):
+            if i % 2 ==0:
+                out, phase[i] = self._get_hip_trajectory_point(t, phase[i], omega[i], beta[i], amp[i], bias[i])
+            else:
+                out, phase[i] = self._get_knee_trajectory_point(t, phase[i], omega[i], beta[i], amp[i], bias[i])
+            ac.append(out)
+        return np.array(ac, dtype = np.float32), phase
 
     def step(self, action):
-        jointposbefore = self.sim.data.qpos[-8:].copy()
-        posbefore = self.get_body_com("torso").copy()
-        penalty = self.perform_action(action)
+        self.w = np.array([action[5 * i] * 6.5 for i in range(8)], dtype = np.float32)
+        self.phase = np.array([action[5 * i + 1] * np.pi * 2 for i in range(8)], dtype = np.float32)
+        self.beta = np.array([action[5 * i + 2] for i in range(8)], dtype = np.float32)
+        self.amp = np.array([action[5 * i + 3] for i in range(8)], dtype = np.float32)
+        self.bias = np.array([action[5 * i + 4] for i in range(8)], dtype = np.float32)
+        self.vel = 0.0
+        self.omega = 0.0
+        reward_trajectory = np.exp(-np.linalg.norm(np.concatenate([
+            self.phase,
+            self.amp,
+            self.bias
+        ], -1) - np.concatenate([
+            self.last_phase,
+            self.last_amp,
+            self.last_bias
+        ], -1), -1))
+        for t in range(100):
+            self.ac, self.phase = self._param_to_activation(t, self.phase, self.w, self.beta, self.amp, self.bias)
+            print(self.phase)
+            print(self.w)
+            posbefore = self.get_body_com("torso").copy()
+            self.do_simulation(self.ac, self.frame_skip)
+            posafter = self.get_body_com("torso").copy()
+            self.vel += (posbefore - posafter) / self.dt
+            self.omega += self.sim.data.qvel[3:6].copy()
+        self.last_positions.pop(0)
+        self.last_positions.append(self.sim.data.qpos[:3])
         info = {}
         state = self.state_vector()
         notdone = np.isfinite(state).all() \
             and state[2] >= 0.2 and state[2] <= 1.0
         done = not notdone
-        posafter = self.get_body_com("torso").copy()
-        jointposafter = self.sim.data.qpos[-8:].copy()
         self.last_actions.pop(0)
-        self.last_actions.append(action.copy())
-        if self._step_num % 100 == 0:
-            self.last_positions.pop(0)
-            self.last_positions.append(self.sim.data.qpos[:3].copy())
-            scale = np.ones((self.params['motion_state_size'],), dtype = np.float32)
-            if self._update == 0:
-                scale[1:] = 0.0
-            if self._update > 0:
-                scale[-1] = 1 - 1 / self._update
-            self._update += 1
-            self.desired_goal[:6] = self.command * scale
-        self._step_num += 1
-        self.vel = (posbefore - posafter) / self.dt
+        self.last_actions.append(self.ac.copy())
+        norm = np.linalg.norm(posbefore - posafter)
+        if norm == 0:
+            norm = 1.0
+        self.vel = self.vel / 100
         self.pos = self.sim.data.qpos[:3].copy()
         self.q = skin.quat.quat2deg(self.sim.data.qpos[3:7])
-        self.omega = self.sim.data.qvel[3:6].copy()
-        self.acc = self.sim.data.qacc[:3]
+        self.omega = self.omega / 100
         self.achieved_goal = np.concatenate([
             self.vel, self.omega
         ], -1)
-        info['reward_velocity'] = np.exp(-np.linalg.norm(self.achieved_goal - self.desired_goal))
-        info['reward_torque'] = -0.5 * np.square(action).sum()
-        info['reward_ctrl'] = np.linalg.norm((jointposafter - jointposbefore) / self.dt) if np.linalg.norm((jointposafter - jointposbefore) / self.dt) < 1.0 else -0.1
-        info['reward_motion'] = np.linalg.norm(self.vel) if np.linalg.norm(self.vel) < 1.0 else -0.1
-        info['reward_contact'] = -0.08 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
+        info['reward_velocity'] = -np.linalg.norm(self.achieved_goal - self.desired_goal) * self.w[0]
+        info['reward_torque'] = -np.linalg.norm(self.sim.data.actuator_force / 100) * 0.5 * self.w[1]
+        vel = np.linalg.norm(self.vel)
+        rw = 0.0
+        if vel < 1.0 and vel > 0.05 and self.desired_goal[0] != 0 :
+            rw = 1.0
+        elif vel == 0 and self.desired_goal[0] == 0:
+            rw = 1.0
+        info['reward_motion'] = rw + reward_trajectory
+        self.last_phase = self.phase.copy()
+        self.last_bias = self.bias.copy()
+        self.last_amp = self.amp.copy()
+        info['reward_contact'] = -0.8 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat)) * self.w[3]
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)
-        reward = info['reward_ctrl'] + info['reward_torque'] + info['reward_motion'] + info['reward_velocity'] + info['reward_contact']
+        reward = info['reward_torque'] + info['reward_motion'] + info['reward_velocity'] + info['reward_contact']
         info['reward'] = reward
         self.ob = self._get_obs()
         return {'observation' : self.ob, 'desired_goal' : self.desired_goal, 'achieved_goal' : self.achieved_goal}, reward, done, info
+
+    def compute_reward(self, achieved_goal, desired_goal, info):
+        out = {}
+        for item in info:
+            for key in item.keys():
+                if key in out.keys():
+                    out[key].append(item[key])
+                else:
+                    out[key] = [item[key]]
+        info = {
+            key : np.array(out[key], dtype = np.float32) \
+                for key in out.keys()
+        }
+        info['reward_velocity'] = -np.linalg.norm(achieved_goal - desired_goal, -1) * self.w[0]
+        reward = info['reward_velocity'] + info['reward_motion'] + \
+            info['reward_contact'] + info['reward_torque']
+        return reward

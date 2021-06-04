@@ -1,0 +1,452 @@
+running build_ext
+[32m[I 2021-06-04 09:59:24,717][0m A new study created in memory with name: no-name-5d0062e0-29bd-4d3c-a168-05a9e685a9ca[0m
+running build_ext
+[32m[I 2021-06-04 09:59:56,202][0m A new study created in memory with name: no-name-2784e472-ad23-4099-a636-174bb8b59473[0m
+running build_ext
+[32m[I 2021-06-04 10:03:13,767][0m A new study created in memory with name: no-name-41998401-e10d-49a3-b3d8-14362c5d3ddc[0m
+running build_ext
+[32m[I 2021-06-04 10:06:14,153][0m A new study created in memory with name: no-name-dff03f79-79ef-4efc-927e-a394fd3a7510[0m
+running build_ext
+[32m[I 2021-06-04 10:07:05,110][0m A new study created in memory with name: no-name-a8df8653-c95d-4cab-8abd-685477b2ee67[0m
+running build_ext
+[32m[I 2021-06-04 10:08:57,118][0m A new study created in memory with name: no-name-cb9d0663-7cff-416e-a118-ed60bb692732[0m
+/home/ubuntu/.local/lib/python3.6/site-packages/optuna/study.py:397: FutureWarning: `n_jobs` argument has been deprecated in v2.7.0. This feature will be removed in v4.0.0. See https://github.com/optuna/optuna/releases/tag/v2.7.0.
+  FutureWarning,
+[33m[W 2021-06-04 10:12:25,050][0m Trial 4 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 76.8000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 102, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 925, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 920, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 76.8000.[0m
+running build_ext
+[32m[I 2021-06-04 10:18:10,617][0m A new study created in memory with name: no-name-1de0a5d2-d367-4e00-bd91-e8e73d645a87[0m
+/home/ubuntu/.local/lib/python3.6/site-packages/optuna/study.py:397: FutureWarning: `n_jobs` argument has been deprecated in v2.7.0. This feature will be removed in v4.0.0. See https://github.com/optuna/optuna/releases/tag/v2.7.0.
+  FutureWarning,
+[33m[W 2021-06-04 10:21:02,174][0m Trial 5 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 6.4000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 105, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 925, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 920, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 6.4000.[0m
+running build_ext
+Failed to import optional module imus. Install optional dependencies
+Failed to import optional module misc. Install optional dependencies
+Traceback (most recent call last):
+  File "tune.py", line 114, in <module>
+    optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
+NameError: name 'sys' is not defined
+running build_ext
+[32m[I 2021-06-04 10:25:13,664][0m A new study created in memory with name: no-name-1e8b12b3-dde9-4b34-b372-84fd608a1d6e[0m
+Failed to import optional module imus. Install optional dependencies
+Failed to import optional module misc. Install optional dependencies
+A new study created in memory with name: no-name-1e8b12b3-dde9-4b34-b372-84fd608a1d6e
+Traceback (most recent call last):
+  File "tune.py", line 120, in <module>
+    study.optimize(optimize_agent, n_trials=100, n_jobs=8,study_name=study_name, storage=storage_name)
+TypeError: optimize() got an unexpected keyword argument 'study_name'
+running build_ext
+[32m[I 2021-06-04 10:25:52,854][0m A new study created in RDB with name: quadruped[0m
+Failed to import optional module imus. Install optional dependencies
+Failed to import optional module misc. Install optional dependencies
+A new study created in RDB with name: quadruped
+/home/ubuntu/.local/lib/python3.6/site-packages/optuna/study.py:397: FutureWarning: `n_jobs` argument has been deprecated in v2.7.0. This feature will be removed in v4.0.0. See https://github.com/optuna/optuna/releases/tag/v2.7.0.
+  FutureWarning,
+[33m[W 2021-06-04 10:32:11,419][0m Trial 1 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 25.6000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 106, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 925, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 920, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 25.6000.[0m
+[DDPG] Action NaN
+Trial 1 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 25.6000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 106, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 925, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 920, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 25.6000.
+Traceback (most recent call last):
+  File "tune.py", line 1, in <module>
+    import optuna
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/__init__.py", line 8, in <module>
+    from optuna import importance
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/importance/__init__.py", line 6, in <module>
+    from optuna.importance._base import BaseImportanceEvaluator
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/importance/_base.py", line 9, in <module>
+    from optuna.samplers import intersection_search_space
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/samplers/__init__.py", line 1, in <module>
+    from optuna.samplers._base import BaseSampler
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/samplers/_base.py", line 8, in <module>
+    from optuna.study import Study
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/study.py", line 17, in <module>
+    from optuna import pruners
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/pruners/__init__.py", line 5, in <module>
+    from optuna.pruners._median import MedianPruner
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/pruners/_median.py", line 1, in <module>
+    from optuna.pruners._percentile import PercentilePruner
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/pruners/_percentile.py", line 6, in <module>
+    import numpy as np
+  File "/usr/local/lib/python3.6/dist-packages/numpy/__init__.py", line 150, in <module>
+    from . import polynomial
+  File "/usr/local/lib/python3.6/dist-packages/numpy/polynomial/__init__.py", line 16, in <module>
+    from .polynomial import Polynomial
+  File "<frozen importlib._bootstrap>", line 971, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 955, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 665, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 674, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 764, in get_code
+  File "<frozen importlib._bootstrap_external>", line 833, in get_data
+KeyboardInterrupt
+running build_ext
+Failed to import optional module imus. Install optional dependencies
+Failed to import optional module misc. Install optional dependencies
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1771, in _execute_context
+    cursor, statement, parameters, context
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 717, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.IntegrityError: UNIQUE constraint failed: studies.study_name
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/storages/_rdb/storage.py", line 224, in create_new_study
+    session.add(study)
+  File "/usr/lib/python3.6/contextlib.py", line 88, in __exit__
+    next(self.gen)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/storages/_rdb/storage.py", line 54, in _create_scoped_session
+    session.commit()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 1428, in commit
+    self._transaction.commit(_to_root=self.future)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 829, in commit
+    self._prepare_impl()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 808, in _prepare_impl
+    self.session.flush()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 3286, in flush
+    self._flush(objects)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 3426, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py", line 72, in __exit__
+    with_traceback=exc_tb,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+    raise exception
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 3386, in _flush
+    flush_context.execute()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/unitofwork.py", line 456, in execute
+    rec.execute(self)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/unitofwork.py", line 633, in execute
+    uow,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/persistence.py", line 247, in save_obj
+    insert,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/orm/persistence.py", line 1222, in _emit_insert_statements
+    execution_options=execution_options,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1582, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+    self, multiparams, params, execution_options
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1461, in _execute_clauseelement
+    cache_hit=cache_hit,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1814, in _execute_context
+    e, statement, parameters, cursor, context
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1995, in _handle_dbapi_exception
+    sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+    raise exception
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1771, in _execute_context
+    cursor, statement, parameters, context
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 717, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: studies.study_name
+[SQL: INSERT INTO studies (study_name) VALUES (?)]
+[parameters: ('quadruped',)]
+(Background on this error at: http://sqlalche.me/e/14/gkpj)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "tune.py", line 118, in <module>
+    study = optuna.create_study(study_name=study_name, storage=storage_name)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/study.py", line 1138, in create_study
+    study_id = storage.create_new_study(study_name)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/storages/_cached_storage.py", line 79, in create_new_study
+    study_id = self._backend.create_new_study(study_name)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/storages/_rdb/storage.py", line 230, in create_new_study
+    "`--skip-if-exists` flag (for CLI).".format(study_name)
+optuna.exceptions.DuplicatedStudyError: Another study with name 'quadruped' already exists. Please specify a different name, or reuse the existing one by setting `load_if_exists` (for Python API) or `--skip-if-exists` flag (for CLI).
+running build_ext
+[32m[I 2021-06-04 11:14:43,321][0m Using an existing study with name 'quadruped' instead of creating a new one.[0m
+Failed to import optional module imus. Install optional dependencies
+Failed to import optional module misc. Install optional dependencies
+Using an existing study with name 'quadruped' instead of creating a new one.
+/home/ubuntu/.local/lib/python3.6/site-packages/optuna/study.py:397: FutureWarning: `n_jobs` argument has been deprecated in v2.7.0. This feature will be removed in v4.0.0. See https://github.com/optuna/optuna/releases/tag/v2.7.0.
+  FutureWarning,
+[33m[W 2021-06-04 11:17:45,905][0m Trial 9 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 38.4000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 106, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 927, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 922, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 38.4000.[0m
+[DDPG] Action NaN
+Trial 9 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 38.4000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 106, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 927, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 922, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 38.4000.
+[33m[W 2021-06-04 11:20:06,060][0m Trial 12 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 102.4000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 106, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 927, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 922, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 102.4000.[0m
+[DDPG] Action NaN
+Trial 12 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 102.4000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 106, in optimize_agent
+    model.learn(50000)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/ppo/ppo.py", line 309, in learn
+    reset_num_timesteps=reset_num_timesteps,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 235, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 176, in collect_rollouts
+    new_obs, rewards, dones, infos = env.step(clipped_actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 927, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 922, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 102.4000.
+[33m[W 2021-06-04 11:24:11,509][0m Trial 11 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 0.0000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 107, in optimize_agent
+    mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=10)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/evaluation.py", line 86, in evaluate_policy
+    observations, rewards, dones, infos = env.step(actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 927, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 922, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 0.0000.[0m
+[DDPG] Action NaN
+Trial 11 failed because of the following error: MujocoException('Got MuJoCo Warning: Unknown warning type Time = 0.0000.',)
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/optuna/_optimize.py", line 217, in _run_trial
+    value_or_values = func(trial)
+  File "tune.py", line 107, in optimize_agent
+    mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=10)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/evaluation.py", line 86, in evaluate_policy
+    observations, rewards, dones, infos = env.step(actions)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 163, in step
+    return self.step_wait()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 44, in step_wait
+    self.actions[env_idx]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/stable_baselines3/common/monitor.py", line 90, in step
+    observation, reward, done, info = self.env.step(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 927, in step
+    penalty = self.perform_action(action)
+  File "/home/ubuntu/AntController/src/simulations/gym/ant.py", line 922, in perform_action
+    self.do_simulation(self.joint_pos, self.frame_skip)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/gym/envs/mujoco/mujoco_env.py", line 125, in do_simulation
+    self.sim.step()
+  File "mjsim.pyx", line 96, in mujoco_py.cymj.MjSim.step
+  File "cymj.pyx", line 102, in mujoco_py.cymj.wrap_mujoco_warning.__exit__
+  File "cymj.pyx", line 62, in mujoco_py.cymj.c_warning_callback
+  File "/usr/local/lib/python3.6/dist-packages/mujoco_py-1.50.1.0-py3.6.egg/mujoco_py/builder.py", line 260, in user_warning_raise_exception
+    raise MujocoException('Got MuJoCo Warning: {}'.format(warn))
+mujoco_py.builder.MujocoException: Got MuJoCo Warning: Unknown warning type Time = 0.0000.
