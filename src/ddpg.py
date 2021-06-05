@@ -323,7 +323,7 @@ if __name__ == '__main__':
             n_steps = params['rnn_steps'] * params['max_steps'],
             gae_lambda = 0.9,
             clip_range = 0.4,
-
+            learning_rate = 0.0005,
         )
     elif args.a2c is not None:
         model = A2C(
@@ -385,7 +385,7 @@ if __name__ == '__main__':
             )
 
 
-    steps = 2e4
+    steps = 1e5
     if args.evaluate is None:
         model.learn(total_timesteps=int(steps), callback=callback)
         model.save(log_dir + '/Policy')
