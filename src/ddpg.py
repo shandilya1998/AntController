@@ -292,7 +292,11 @@ if __name__ == '__main__':
                     verbose = 1,
                     tensorboard_log = log_dir,
                     batch_size = batch_size,
-                    train_freq = (5, 'step'),
+                    train_freq = (1, 'step'),
+                    policy_kwargs = {
+                        'net_arch' : [512, 512],
+                        'activation_fn' : torch.nn.Sigmoid,
+                    },
                 )
 
             if args.model_dir is not None:

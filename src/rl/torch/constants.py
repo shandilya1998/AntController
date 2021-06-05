@@ -42,7 +42,7 @@ params = {
     'action_scale_factor'         : 1.2217,#:exp69, 1.0,
     'scale_factor_1'              : 0.1,
     'units_action_input'          : 20,
-    'rnn_steps'                   : 25,
+    'rnn_steps'                   : 128,
     'units_critic_hidden'         : 20,
     'lstm_units'                  : action_dim,
     'lstm_state_dense_activation' : 'relu',

@@ -1097,6 +1097,7 @@ class AntEnvV8(AntEnvV4):
         return np.array(ac, dtype = np.float32), phase
 
     def step(self, action):
+        #print('action {}'.format(np.round(action, 5)))
         self.w = np.array([action[5 * i] * 6.5 for i in range(8)], dtype = np.float32)
         self.phase = np.array([action[5 * i + 1] * np.pi * 2 for i in range(8)], dtype = np.float32)
         self.beta = np.array([0.8 * action[5 * i + 2] + 0.1 for i in range(8)], dtype = np.float32)
