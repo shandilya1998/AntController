@@ -295,7 +295,7 @@ if __name__ == '__main__':
                     train_freq = (1, 'step'),
                     policy_kwargs = {
                         'net_arch' : [512, 512],
-                        'activation_fn' : torch.nn.Sigmoid,
+                        'activation_fn' : torch.nn.Tanh,
                     },
                 )
 
@@ -314,7 +314,7 @@ if __name__ == '__main__':
             env = env,
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
-                'activation_fn' : torch.nn.Sigmoid,
+                'activation_fn' : torch.nn.Tanh,
                 'log_std_init' : -1,
                 'ortho_init' : False
             },
@@ -335,7 +335,7 @@ if __name__ == '__main__':
             env = env,
             policy_kwargs = {
                 'net_arch' : [dict(pi=[512, 512], vf=[512, 512])],
-                'activation_fn' : torch.nn.Sigmoid,
+                'activation_fn' : torch.nn.Tanh,
                 'log_std_init' : -2,
                 'ortho_init' : False
             },

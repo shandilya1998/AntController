@@ -1021,9 +1021,9 @@ class AntEnvV8(AntEnvV4):
         self.last_positions = [self.pos] * 5
         self.desired_goal = np.concatenate([self.command, self.init_qpos[:3]], -1)
         self.achieved_goal = np.zeros(shape = self.desired_goal.shape, dtype = self.desired_goal.dtype)
-        self.last_action = np.zeros((8 * 5,), dtype = np.float32)
-        low = np.zeros((8 * 5,), dtype = np.float32)
-        high = np.ones((8 * 5,), dtype = np.float32)
+        self.action = np.zeros((8 * 4,), dtype = np.float32)
+        low = np.zeros((8 * 4,), dtype = np.float32)
+        high = np.ones((8 * 4,), dtype = np.float32)
         self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
         return self.action_space
 
@@ -1043,6 +1043,7 @@ class AntEnvV8(AntEnvV4):
         self.last_w = np.zeros((8,), dtype = np.float32)
         self.joint_pos = self.init_qpos[-8:]
         self.last_actions = [self.init_qpos[-8:]] * 5
+        self.action = np.zeros((8 * 4,), dtype = np.float32)
         self.last_positions = [self.init_qpos[:3]] * 5
         self.desired_goal = np.concatenate([self.command, self.init_qpos[:3]], -1)
         self.achieved_goal = np.concatenate([
@@ -1059,7 +1060,7 @@ class AntEnvV8(AntEnvV4):
         }
 
     def _get_obs(self):
-        return np.concatenate(self.last_actions, -1)
+        return np.concatenate([self.action] + self.last_actions, -1)
 
     def _get_hip_trajectory_point(self, t, phase, omega, beta, amp, bias):
         omega_st = omega / (beta + 1e-8)
@@ -1098,6 +1099,7 @@ class AntEnvV8(AntEnvV4):
 
     def step(self, action):
         #print('action {}'.format(np.round(action, 5)))
+        self.action = action
         self.w = np.array([action[5 * i] * 6.5 for i in range(8)], dtype = np.float32)
         self.phase = np.array([(action[5 * i + 1] + 1) * np.pi * 2 for i in range(8)], dtype = np.float32)
         #self.beta = np.array([0.8 * action[5 * i + 2] + 0.1 for i in range(8)], dtype = np.float32)
