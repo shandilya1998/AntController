@@ -1099,10 +1099,10 @@ class AntEnvV8(AntEnvV4):
     def step(self, action):
         #print('action {}'.format(np.round(action, 5)))
         self.w = np.array([action[5 * i] * 6.5 for i in range(8)], dtype = np.float32)
-        self.phase = np.array([action[5 * i + 1] * np.pi * 2 for i in range(8)], dtype = np.float32)
-        self.beta = np.array([0.8 * action[5 * i + 2] + 0.1 for i in range(8)], dtype = np.float32)
-        self.amp = np.array([action[5 * i + 3] for i in range(8)], dtype = np.float32)
-        self.bias = np.array([action[5 * i + 4] for i in range(8)], dtype = np.float32)
+        self.phase = np.array([(action[5 * i + 1] + 1) * np.pi * 2 for i in range(8)], dtype = np.float32)
+        #self.beta = np.array([0.8 * action[5 * i + 2] + 0.1 for i in range(8)], dtype = np.float32)
+        self.amp = np.array([action[5 * i + 2]  * 1.2217 for i in range(8)], dtype = np.float32)
+        self.bias = np.array([action[5 * i + 3] * 1.2217 for i in range(8)], dtype = np.float32)
         self.vel = 0.0
         self.omega = 0.0
         self.COUNT += 1
@@ -1112,13 +1112,14 @@ class AntEnvV8(AntEnvV4):
         reward_motion = 0.0
         reward_position = 0.0
         reward_trajectory = np.exp(-np.linalg.norm(np.concatenate([
-            self.amp - self.last_amp,
-            self.bias - self.last_bias,
-            (self.beta - self.last_beta) / 0.8,
+            (self.amp - self.last_amp) / 1.2217,
+            (self.bias - self.last_bias) / 1.2217,
             (self.w - self.last_w) / 6.5
         ], -1))) * 0.5
         for t in range(50):
-            self.ac, self.phase = self._param_to_activation(t, self.phase, self.w, self.beta, self.amp, self.bias)
+            self.ac = self.amp * np.sin(self.phase) + self.bias
+            self.phase += self.w * t
+            self.phase = self.phase % (np.pi * 2)
             posbefore = self.get_body_com("torso").copy()
             #self.render()
             self.do_simulation(self.ac, self.frame_skip)
