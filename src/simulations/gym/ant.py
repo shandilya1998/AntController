@@ -1017,8 +1017,8 @@ class AntEnvV8(AntEnvV4):
         self.joint_pos = self.init_qpos[-8:]
         self.last_actions = [self.init_qpos[-8:]] * 5
         self.last_positions = [self.pos] * 5
-        self.desired_goal = self.command
-        self.achieved_goal = np.zeros(shape = self.command.shape, dtype = self.command.dtype)
+        self.desired_goal = np.concatenate([self.command, self.init_qpos[:3]], -1)
+        self.achieved_goal = np.zeros(shape = self.desired_goal.shape, dtype = self.desired_goal.dtype)
         low = np.zeros((8 * 5,), dtype = np.float32)
         high = np.ones((8 * 5,), dtype = np.float32)
         self.action_space = spaces.Box(low=low, high=high, dtype=np.float32)
@@ -1036,10 +1036,11 @@ class AntEnvV8(AntEnvV4):
         self.joint_pos = self.init_qpos[-8:]
         self.last_actions = [self.init_qpos[-8:]] * 5
         self.last_positions = [self.init_qpos[:3]] * 5
-        self.desired_goal = self.command
+        self.desired_goal = np.concatenate([self.command, self.init_qpos[:3]], -1)
         self.achieved_goal = np.concatenate([
             self.vel,
-            self.omega
+            self.omega,
+            self.init_qpos[:3],
         ], -1)
         self.sim.reset()
         self.ob = self.reset_model()
@@ -1108,14 +1109,34 @@ class AntEnvV8(AntEnvV4):
         except FloatingPointError:
             reward_trajectory = -2.0
         self.COUNT += 1
+        reward_velocity = 0.0
+        reward_torque = 0.0
+        reward_contact = 0.0
+        reward_motion = 0.0
+        reward_position = 0.0
         for t in range(100):
             self.ac, self.phase = self._param_to_activation(t, self.phase, self.w, self.beta, self.amp, self.bias)
             posbefore = self.get_body_com("torso").copy()
             #self.render()
             self.do_simulation(self.ac, self.frame_skip)
             posafter = self.get_body_com("torso").copy()
-            self.vel += (posbefore - posafter) / self.dt
-            self.omega += self.sim.data.qvel[3:6].copy()
+            vel = (posbefore - posafter) / self.dt
+            omega = self.sim.data.qvel[3:6].copy()
+            reward_velocity += -np.linalg.norm(np.concatenate([vel, omega], -1) - self.desired_goal[:6]) / 100
+            rw = 0.0
+            speed = np.linalg.norm(vel)
+            if speed < 1.0 and speed > 0.05 and self.desired_goal[0] != 0 :
+                rw = 1.0
+            elif speed == 0 and self.desired_goal[0] == 0:
+                rw = 1.0
+            reward_motion += rw / 100
+            reward_torque += -np.linalg.norm(self.sim.data.actuator_force / 100) / 100
+            reward_contact += -np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat) / 100
+            self.desired_goal[-3:] += self.desired_goal[:3] * self.dt
+            self.achieved_goal[-3:] = self.sim.data.qpos[:3]
+            reward_position += -np.linalg.norm(self.desired_goal[-3:] - self.achieved_goal[-3:], -1) / 100
+            self.vel += vel
+            self.omega += omega
         self.last_positions.pop(0)
         self.last_positions.append(self.sim.data.qpos[:3])
         info = {}
@@ -1133,21 +1154,22 @@ class AntEnvV8(AntEnvV4):
         self.q = skin.quat.quat2deg(self.sim.data.qpos[3:7])
         self.omega = self.omega / 100
         self.achieved_goal = np.concatenate([
-            self.vel, self.omega
+            self.vel, self.omega, self.sim.data.qpos[:3]
         ], -1)
-        info['reward_velocity'] = np.exp(-np.linalg.norm(self.achieved_goal - self.desired_goal))
-        info['reward_torque'] = np.exp(-np.linalg.norm(self.sim.data.actuator_force / 100))
+        info['reward_velocity'] = np.exp(reward_velocity)
+        info['reward_torque'] = 0.1 * np.exp(reward_torque)
         vel = np.linalg.norm(self.vel)
         rw = 0.0
         if vel < 1.0 and vel > 0.05 and self.desired_goal[0] != 0 :
             rw = 1.0
         elif vel == 0 and self.desired_goal[0] == 0:
             rw = 1.0
-        info['reward_motion'] = rw + reward_trajectory
+        info['reward_motion'] = reward_motion * 0.5 + reward_trajectory * 0.5
+        info['reward_position'] = 0.3 * np.exp(reward_position)
         self.last_phase = self.phase.copy()
         self.last_bias = self.bias.copy()
         self.last_amp = self.amp.copy()
-        info['reward_contact'] = -0.8 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
+        info['reward_contact'] = 0.1 * np.exp(reward_contact)
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)

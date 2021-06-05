@@ -24085,3 +24085,218 @@ Saving new best model to rl/out_dir/models/exp73/best_model.zip
 |    learning_rate   | 0.001    |
 |    n_updates       | 855060   |
 ---------------------------------
+running build_ext
+Failed to import optional module imus. Install optional dependencies
+Failed to import optional module misc. Install optional dependencies
+Using cuda device
+Logging to rl/out_dir/models/exp73/A2C_3
+------------------------------------
+| reward                | -0.647   |
+| reward_contact        | -0.427   |
+| reward_motion         | 0.543    |
+| reward_torque         | -0.182   |
+| reward_velocity       | -0.581   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -14.7    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 100      |
+|    time_elapsed       | 51       |
+|    total_timesteps    | 800      |
+| train/                |          |
+|    entropy_loss       | -79      |
+|    explained_variance | -0.00588 |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 99       |
+|    policy_loss        | -0.333   |
+|    std                | 0.135    |
+|    value_loss         | 22.9     |
+------------------------------------
+------------------------------------
+| reward                | -0.87    |
+| reward_contact        | -0.482   |
+| reward_motion         | 0.307    |
+| reward_torque         | -0.133   |
+| reward_velocity       | -0.562   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -16.6    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 200      |
+|    time_elapsed       | 104      |
+|    total_timesteps    | 1600     |
+| train/                |          |
+|    entropy_loss       | -83.9    |
+|    explained_variance | 0.133    |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 199      |
+|    policy_loss        | 0.75     |
+|    std                | 0.135    |
+|    value_loss         | 15.7     |
+------------------------------------
+------------------------------------
+| reward                | -0.995   |
+| reward_contact        | -0.504   |
+| reward_motion         | 0.15     |
+| reward_torque         | -0.0856  |
+| reward_velocity       | -0.556   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -18.5    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 300      |
+|    time_elapsed       | 156      |
+|    total_timesteps    | 2400     |
+| train/                |          |
+|    entropy_loss       | -83.6    |
+|    explained_variance | 0.015    |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 299      |
+|    policy_loss        | -0.00582 |
+|    std                | 0.135    |
+|    value_loss         | 11.9     |
+------------------------------------
+------------------------------------
+| reward                | -1.05    |
+| reward_contact        | -0.512   |
+| reward_motion         | 0.07     |
+| reward_torque         | -0.0546  |
+| reward_velocity       | -0.556   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -18.7    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 400      |
+|    time_elapsed       | 208      |
+|    total_timesteps    | 3200     |
+| train/                |          |
+|    entropy_loss       | -85      |
+|    explained_variance | 0.0626   |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 399      |
+|    policy_loss        | 0.0817   |
+|    std                | 0.135    |
+|    value_loss         | 8.02     |
+------------------------------------
+------------------------------------
+| reward                | -1.09    |
+| reward_contact        | -0.501   |
+| reward_motion         | 0.01     |
+| reward_torque         | -0.0421  |
+| reward_velocity       | -0.56    |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -19.9    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 500      |
+|    time_elapsed       | 260      |
+|    total_timesteps    | 4000     |
+| train/                |          |
+|    entropy_loss       | -85.3    |
+|    explained_variance | 0.0365   |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 499      |
+|    policy_loss        | 0.625    |
+|    std                | 0.135    |
+|    value_loss         | 17.9     |
+------------------------------------
+------------------------------------
+| reward                | -1.05    |
+| reward_contact        | -0.49    |
+| reward_motion         | 0.05     |
+| reward_torque         | -0.0965  |
+| reward_velocity       | -0.516   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -19.5    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 600      |
+|    time_elapsed       | 311      |
+|    total_timesteps    | 4800     |
+| train/                |          |
+|    entropy_loss       | -84      |
+|    explained_variance | -0.0824  |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 599      |
+|    policy_loss        | 0.621    |
+|    std                | 0.135    |
+|    value_loss         | 0.402    |
+------------------------------------
+------------------------------------
+| reward                | -0.847   |
+| reward_contact        | -0.404   |
+| reward_motion         | 0.33     |
+| reward_torque         | -0.253   |
+| reward_velocity       | -0.52    |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -15.7    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 700      |
+|    time_elapsed       | 362      |
+|    total_timesteps    | 5600     |
+| train/                |          |
+|    entropy_loss       | -87.9    |
+|    explained_variance | -0.268   |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 699      |
+|    policy_loss        | -0.0305  |
+|    std                | 0.135    |
+|    value_loss         | 6.12     |
+------------------------------------
+Num timesteps: 6000
+Best mean reward: -inf - Last mean reward per episode: -13.05
+Saving new best model to rl/out_dir/models/exp73/best_model.zip
+------------------------------------
+| reward                | -0.634   |
+| reward_contact        | -0.302   |
+| reward_motion         | 0.58     |
+| reward_torque         | -0.354   |
+| reward_velocity       | -0.558   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -10.9    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 800      |
+|    time_elapsed       | 413      |
+|    total_timesteps    | 6400     |
+| train/                |          |
+|    entropy_loss       | -86.5    |
+|    explained_variance | -0.625   |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 799      |
+|    policy_loss        | 0.135    |
+|    std                | 0.135    |
+|    value_loss         | 0.352    |
+------------------------------------
+------------------------------------
+| reward                | -0.583   |
+| reward_contact        | -0.244   |
+| reward_motion         | 0.65     |
+| reward_torque         | -0.341   |
+| reward_velocity       | -0.648   |
+| rollout/              |          |
+|    ep_len_mean        | 20       |
+|    ep_rew_mean        | -10.1    |
+| time/                 |          |
+|    fps                | 15       |
+|    iterations         | 900      |
+|    time_elapsed       | 463      |
+|    total_timesteps    | 7200     |
+| train/                |          |
+|    entropy_loss       | -88      |
+|    explained_variance | -0.0842  |
+|    learning_rate      | 0.00096  |
+|    n_updates          | 899      |
+|    policy_loss        | -0.00791 |
+|    std                | 0.135    |
+|    value_loss         | 9.95     |
+------------------------------------
