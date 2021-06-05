@@ -1059,7 +1059,7 @@ class AntEnvV8(AntEnvV4):
         }
 
     def _get_obs(self):
-        return np.concatenate(self.last_actions + self.last_positions, -1)
+        return np.concatenate(self.last_actions, -1)
 
     def _get_hip_trajectory_point(self, t, phase, omega, beta, amp, bias):
         omega_st = omega / (beta + 1e-8)
@@ -1116,7 +1116,7 @@ class AntEnvV8(AntEnvV4):
             (self.beta - self.last_beta) / 0.8,
             (self.w - self.last_w) / 6.5
         ], -1))) * 0.5
-        for t in range(100):
+        for t in range(50):
             self.ac, self.phase = self._param_to_activation(t, self.phase, self.w, self.beta, self.amp, self.bias)
             posbefore = self.get_body_com("torso").copy()
             #self.render()
@@ -1124,16 +1124,16 @@ class AntEnvV8(AntEnvV4):
             posafter = self.get_body_com("torso").copy()
             vel = (posbefore - posafter) / self.dt
             omega = self.sim.data.qvel[3:6].copy()
-            reward_velocity += -np.linalg.norm(np.concatenate([vel, omega], -1) - self.desired_goal[:6]) / 100
+            reward_velocity += -np.linalg.norm(np.concatenate([vel, omega], -1) - self.desired_goal[:6]) / 50
             rw = 0.0
             speed = np.linalg.norm(vel)
             if speed < 1.0 and speed > 0.05 and self.desired_goal[0] != 0 :
                 rw = 1.0
             elif speed == 0 and self.desired_goal[0] == 0:
                 rw = 1.0
-            reward_motion += rw / 100
-            reward_torque += -np.linalg.norm(self.sim.data.actuator_force / 100) / 100
-            reward_contact += -np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat) / 100
+            reward_motion += rw / 50
+            reward_torque += -np.linalg.norm(self.sim.data.actuator_force / 100) / 50
+            reward_contact += -np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat) / 50
             self.desired_goal[-3:] += self.desired_goal[:3] * self.dt
             self.vel += vel
             self.omega += omega
@@ -1149,10 +1149,10 @@ class AntEnvV8(AntEnvV4):
         norm = np.linalg.norm(posbefore - posafter)
         if norm == 0:
             norm = 1.0
-        self.vel = self.vel / 100
+        self.vel = self.vel / 50
         self.pos = self.sim.data.qpos[:3].copy()
         self.q = skin.quat.quat2deg(self.sim.data.qpos[3:7])
-        self.omega = self.omega / 100
+        self.omega = self.omega / 50
         self.achieved_goal = np.concatenate([
             self.vel, self.omega, self.sim.data.qpos[:3]
         ], -1)
