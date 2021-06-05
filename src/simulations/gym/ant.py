@@ -1100,11 +1100,11 @@ class AntEnvV8(AntEnvV4):
     def step(self, action):
         #print('action {}'.format(np.round(action, 5)))
         self.action = action
-        self.w = np.array([action[5 * i] * 6.5 for i in range(8)], dtype = np.float32)
-        self.phase = np.array([(action[5 * i + 1] + 1) * np.pi * 2 for i in range(8)], dtype = np.float32)
+        self.w = np.array([action[4 * i] * 6.5 for i in range(8)], dtype = np.float32)
+        self.phase = np.array([(action[4 * i + 1] + 1) * np.pi * 2 for i in range(8)], dtype = np.float32)
         #self.beta = np.array([0.8 * action[5 * i + 2] + 0.1 for i in range(8)], dtype = np.float32)
-        self.amp = np.array([action[5 * i + 2]  * 1.2217 for i in range(8)], dtype = np.float32)
-        self.bias = np.array([action[5 * i + 3] * 1.2217 for i in range(8)], dtype = np.float32)
+        self.amp = np.array([action[4 * i + 2]  * 1.2217 for i in range(8)], dtype = np.float32)
+        self.bias = np.array([action[4* i + 3] * 1.2217 for i in range(8)], dtype = np.float32)
         self.vel = 0.0
         self.omega = 0.0
         self.COUNT += 1
@@ -1120,7 +1120,7 @@ class AntEnvV8(AntEnvV4):
         ], -1))) * 0.5
         for t in range(50):
             self.ac = self.amp * np.sin(self.phase) + self.bias
-            self.phase += self.w * t
+            self.phase += self.w * t * self.dt
             self.phase = self.phase % (np.pi * 2)
             posbefore = self.get_body_com("torso").copy()
             #self.render()
@@ -1161,7 +1161,7 @@ class AntEnvV8(AntEnvV4):
             self.vel, self.omega, self.sim.data.qpos[:3]
         ], -1)
         info['reward_velocity'] = np.exp(reward_velocity)
-        info['reward_torque'] = 0.0125 * np.exp(reward_torque)
+        info['reward_torque'] = 0.00125 * np.exp(reward_torque)
         vel = np.linalg.norm(self.vel)
         rw = 0.0
         info['reward_motion'] = (reward_trajectory + np.exp(-np.linalg.norm((self.phase - self.last_phase) / (2 * np.pi))) * 0.5) * 0.25
@@ -1173,7 +1173,7 @@ class AntEnvV8(AntEnvV4):
         self.last_w = self.w.copy()
         self.last_beta = self.beta.copy()
         self.last_action = action.copy()
-        info['reward_contact'] = 0.125 * np.exp(reward_contact)
+        info['reward_contact'] = 0.225 * np.exp(reward_contact)
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)

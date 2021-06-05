@@ -389,7 +389,7 @@ if __name__ == '__main__':
             )
 
 
-    steps = 1e5
+    steps = 5e4
     if args.evaluate is None:
         model.learn(total_timesteps=int(steps), callback=callback)
         model.save(log_dir + '/Policy')
@@ -404,7 +404,7 @@ if __name__ == '__main__':
             torch.save(model.actor, os.path.join(log_dir, 'actor.pth'))
             torch.save(model.critic, os.path.join(log_dir, 'critic.pth'))
             torch.save(model.critic_target, os.path.join(log_dir, 'critic_target.pth'))
-            torch.save(model.actor_target, os.path.joint(log_dir, 'actor_target.pth'))
+            torch.save(model.actor_target, os.path.join(log_dir, 'actor_target.pth'))
     else:
         model_class = None
         if args.ppo is not None:
