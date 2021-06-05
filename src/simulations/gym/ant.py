@@ -982,6 +982,8 @@ class AntEnvV7(AntEnvV4):
             self.omega
         ] + self.last_actions + self.last_positions, -1)
 
+
+
 class AntEnvV8(AntEnvV4):
 
     def _create_command_lst(self):
@@ -995,6 +997,7 @@ class AntEnvV8(AntEnvV4):
     def _set_action_space(self):
         self._step = 0
         self.T = 100
+        self.COUNT = 0
         self.params = params
         self.phase = np.zeros((8,), dtype = np.float32)
         self.bias = np.zeros((8,), dtype = np.float32)
@@ -1059,6 +1062,7 @@ class AntEnvV8(AntEnvV4):
             phase += omega_st * t * self.dt
         else:
             phase += omega_sw * t * self.dt
+        phase = phase * (np.pi * 2)
         return ac, phase
 
     def _get_knee_trajectory_point(self, t, phase, omega, beta, amp, bias):
@@ -1091,7 +1095,7 @@ class AntEnvV8(AntEnvV4):
         self.bias = np.array([action[5 * i + 4] for i in range(8)], dtype = np.float32)
         self.vel = 0.0
         self.omega = 0.0
-        reward_trajectory = np.exp(-np.linalg.norm(np.concatenate([
+        reward_trajectory = np.concatenate([
             self.phase,
             self.amp,
             self.bias
@@ -1099,11 +1103,14 @@ class AntEnvV8(AntEnvV4):
             self.last_phase,
             self.last_amp,
             self.last_bias
-        ], -1), -1))
+        ], -1)
+        try:
+            reward_trajectory = np.exp(-np.sum(np.abs(reward_trajectory)))
+        except FloatingPointError:
+            reward_trajectory = -2.0
+        self.COUNT += 1
         for t in range(100):
             self.ac, self.phase = self._param_to_activation(t, self.phase, self.w, self.beta, self.amp, self.bias)
-            print(self.phase)
-            print(self.w)
             posbefore = self.get_body_com("torso").copy()
             self.do_simulation(self.ac, self.frame_skip)
             posafter = self.get_body_com("torso").copy()

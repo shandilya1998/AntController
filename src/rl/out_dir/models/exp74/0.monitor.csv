@@ -1,2 +1,2 @@
-#{"t_start": 1622833870.991805, "env_id": "AntEnv-v8"}
+#{"t_start": 1622870426.0526786, "env_id": "AntEnv-v8"}
 r,l,t,reward,reward_motion,reward_torque,reward_velocity,reward_contact
