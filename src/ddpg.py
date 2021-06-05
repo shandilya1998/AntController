@@ -246,7 +246,7 @@ if __name__ == '__main__':
                 policy,
                 env,
                 action_noise = action_noise,
-                verbose = 2,
+                verbose = 1,
                 tensorboard_log = log_dir,
                 batch_size = batch_size,
                 learning_starts = 1000,
@@ -270,7 +270,7 @@ if __name__ == '__main__':
                     env,
                     learning_starts=5000,
                     action_noise = action_noise,
-                    verbose = 2,
+                    verbose = 1,
                     tensorboard_log = log_dir,
                     batch_size = batch_size,
                     train_freq = (5, 'step'),
@@ -289,7 +289,7 @@ if __name__ == '__main__':
                     ),
                     learning_starts=5000,
                     action_noise = action_noise,
-                    verbose = 2,
+                    verbose = 1,
                     tensorboard_log = log_dir,
                     batch_size = batch_size,
                     train_freq = (5, 'step'),
@@ -315,7 +315,7 @@ if __name__ == '__main__':
                 'ortho_init' : False
             },
             tensorboard_log = log_dir,
-            verbose = 2,
+            verbose = 1,
             batch_size = batch_size,
             use_sde = True,
             sde_sample_freq = 4,
@@ -336,7 +336,7 @@ if __name__ == '__main__':
                 'ortho_init' : False
             },
             tensorboard_log = log_dir,
-            verbose = 2,
+            verbose = 1,
             n_steps = 8,
             gae_lambda = 0.9,
             vf_coef=0.4,
@@ -351,7 +351,7 @@ if __name__ == '__main__':
                 env,
                 learning_starts=10000,
                 action_noise = action_noise,
-                verbose = 2,
+                verbose = 1,
                 tensorboard_log = log_dir,
                 batch_size = batch_size,
                 gamma = 0.98,
@@ -374,7 +374,7 @@ if __name__ == '__main__':
                 ),
                 learning_starts=10000,
                 action_noise = action_noise,
-                verbose = 2,
+                verbose = 1,
                 tensorboard_log = log_dir,
                 batch_size = batch_size,
                 gamma = 0.98,
@@ -385,7 +385,7 @@ if __name__ == '__main__':
             )
 
 
-    steps = 1e6
+    steps = 2e4
     if args.evaluate is None:
         model.learn(total_timesteps=int(steps), callback=callback)
         model.save(log_dir + '/Policy')

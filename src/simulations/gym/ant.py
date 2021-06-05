@@ -1001,13 +1001,12 @@ class AntEnvV8(AntEnvV4):
         self.params = params
         self.phase = np.zeros((8,), dtype = np.float32)
         self.bias = np.zeros((8,), dtype = np.float32)
-        self.omega = np.zeros((8,), dtype = np.float32)
+        self.w = np.zeros((8,), dtype = np.float32)
         self.amp = np.zeros((8,), dtype = np.float32)
         self.beta = np.zeros((8,), dtype = np.float32)
         self.last_phase = np.zeros((8,), dtype = np.float32)
         self.last_bias = np.zeros((8,), dtype = np.float32)
         self.last_amp = np.zeros((8,), dtype = np.float32)
-        self.w = np.array([1.0, 1.0, 1.0, 1.0], dtype = np.float32)
         self.q = np.zeros((3,), dtype = np.float32)
         self.pos = self.init_qpos[:3]
         self.vel = np.zeros((3,), dtype = np.float32)
@@ -1136,8 +1135,8 @@ class AntEnvV8(AntEnvV4):
         self.achieved_goal = np.concatenate([
             self.vel, self.omega
         ], -1)
-        info['reward_velocity'] = -np.linalg.norm(self.achieved_goal - self.desired_goal) * self.w[0]
-        info['reward_torque'] = -np.linalg.norm(self.sim.data.actuator_force / 100) * 0.5 * self.w[1]
+        info['reward_velocity'] = np.exp(-np.linalg.norm(self.achieved_goal - self.desired_goal))
+        info['reward_torque'] = np.exp(-np.linalg.norm(self.sim.data.actuator_force / 100))
         vel = np.linalg.norm(self.vel)
         rw = 0.0
         if vel < 1.0 and vel > 0.05 and self.desired_goal[0] != 0 :
@@ -1148,7 +1147,7 @@ class AntEnvV8(AntEnvV4):
         self.last_phase = self.phase.copy()
         self.last_bias = self.bias.copy()
         self.last_amp = self.amp.copy()
-        info['reward_contact'] = -0.8 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat)) * self.w[3]
+        info['reward_contact'] = -0.8 * self.dt * np.square(np.linalg.norm(np.clip(self.sim.data.cfrc_ext, -1, 1).flat))
         for key in info:
             if np.isnan(info[key]).any():
                 print(key)
@@ -1169,7 +1168,7 @@ class AntEnvV8(AntEnvV4):
             key : np.array(out[key], dtype = np.float32) \
                 for key in out.keys()
         }
-        info['reward_velocity'] = -np.linalg.norm(achieved_goal - desired_goal, -1) * self.w[0]
+        info['reward_velocity'] = -np.linalg.norm(achieved_goal - desired_goal, -1)
         reward = info['reward_velocity'] + info['reward_motion'] + \
             info['reward_contact'] + info['reward_torque']
         return reward
