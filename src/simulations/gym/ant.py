@@ -1112,6 +1112,7 @@ class AntEnvV8(AntEnvV4):
         for t in range(100):
             self.ac, self.phase = self._param_to_activation(t, self.phase, self.w, self.beta, self.amp, self.bias)
             posbefore = self.get_body_com("torso").copy()
+            #self.render()
             self.do_simulation(self.ac, self.frame_skip)
             posafter = self.get_body_com("torso").copy()
             self.vel += (posbefore - posafter) / self.dt
